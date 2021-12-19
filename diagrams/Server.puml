@@ -1,7 +1,7 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-note "This interface allows interacting with the board. \n The implementation should check if the move is possible, \n but doesn't need to check neither who's made the move nor if the win conditions" as BoardNote
+note "This interface allows interacting with the board. \n The implementation should check if the move is possible, \n but doesn't need to check neither who's made the move nor the win conditions" as BoardNote
 note "This interface allows to interact with the game itself. \n It should check win cons and move correctness" as GMnote
 note "Used for player distinction. \n The values' names should be considered symbolic" as ClNote
 note "Used for clearer seat distinction" as Snote
@@ -13,6 +13,7 @@ Snote .. Seat
 
 interface ServerApi
 interface Board
+interface Runnable
 class Checker
 class Server
 class ArrayBoard
@@ -22,16 +23,17 @@ class Lobby
 enum Color
 enum Seat
 
-Server --|> ServerApi : implements
-Checker "1" --* "*" ArrayBoard
-ArrayBoard --|> Board : implements
-GameMaster ..>  Lobby : uses
-SimpleMaster --|> GameMaster : implements
+Server ..|> ServerApi : implements
+Color "1" --* "*" ArrayBoard
+ArrayBoard ..|> Board : implements
+Lobby ..> GameMaster : uses
+SimpleMaster ..|> GameMaster : implements
 SimpleMaster ..> Board : uses
-Color "1" --o "*" Checker
-'Color "1" --o "1" Player
+Seat --o SimpleMaster : uses
 Lobby "*" --* "1" Server
 Player "0..6" --o Lobby
+Player "*" --o Server
+Player ..|> Runnable : implements
 
 class Checker{
    + color : enum
@@ -39,48 +41,65 @@ class Checker{
 
 class Player{
     -isReady : boolean
-    +moveChecker(oldX : int, oldY : int, newX : int, newY : int)  : void
-    +setReady() : void
-    +setNotRead() : void
+    -name : String
+    -InterpretCommand() : void
+    -moveChecker(oldX : int, oldY : int, newX : int, newY : int)  : void
+    -setReady(isReady : boolean) : void
+    -leave() : void
+    -joinLobby(int number) : void
+    -sendBoard() : void
+    -CheckColor() : void
+    +getName() : String
+    +getReady() : boolean
 }
-
 class ArrayBoard{
-    - checkerList : Array<Array<Checker>>
+    -colorList : Array<Array<Color>>
 }
 
 interface Board{
     +moveChecker(oldX : int, oldY : int, newX : int, newY : int) : boolean
-    +getChecker(X : int, Y : int) : Checker
+    +getCheckerColor(X : int, Y : int) : Color
     +addChecker(X : int, Y : int, color : Color) : void
     +removeChecker(X : int, Y : int) : void
-    +getCheckerArray() :  Array<Array<Checker>>
+    +getCheckerColorArray() :  Array<Array<Color>>
 }
 
 interface GameMaster{
     __Meta methods__
    + addPlayer() : Color
-   + addPlayerAt(seat : Seat) : Color
+   + addPlayer(seat : Seat) : Color
    + removePlayer(color : Color)
    + clearBoard() : void
-   + startGame() : void
+   + startGame() : Color
    + isFinished() : Color
    __Game methods__
    + moveChecker(oldX : int, oldY : int, newX : int, newY : int, color : Color) : boolean
-
+   + getCheckerArray() : Array<Array<Color>>
 }
 'For further consideration
 interface ServerApi{
-    +connect(String address, String user, String password) : void
-    +disconnect() : void
-    +sendCommand() : void
-    +retrieveFeedBack() : void
+    kickPlayer(String name) : void
+    showPlayers(String name) : Array<String>
+    showPlayerCount() : int
 }
 class SimpleMaster{
+    -board : Board
     -colorList : map<Seat,Color>
-    -checkWinConditions(Board, Player) : boolean
+    -checkWinConditions(color : Color)r) : boolean
 }
 class Lobby{
     -game : GameMaster
+    -colorMap : map<Player,Color>
+    +removePlayer() : void
+    +addPlayer() : void
+    +checkReadiness() : Color
+    +getCheckerArray() : Array<Array<Color>>
+    +moveChecker(player : Player)
+}
+class Server{
+    lobbies : LinkedList<Lobby>
+    players : LinkedList<Player>
+    interpretCommand()
 }
 enum Color{
     RED

@@ -1,13 +1,23 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-class Checker
-class Board
-class Player
-class Opponent
+Note "TODO: UI classes" as N1
+
 interface ServerApi
+class serverListener
+class ClientLogic
 
-Player --|> Opponent : extends
+serverListener ..> ServerApi : implements
+ClientLogic ..> ServerApi : uses
 
+interface ServerApi{
+    +connect(address : String, port : Port)
+    +joinGame(roomNumber : int)
+    +setRead(ready : boolean
+    +moveChecker(oldX, oldY, newX, newY) : void
+    +getColor() : void
+    +getBoard() : Array<Array<Color>>
+    +wait() : void
+}
 
 @enduml
