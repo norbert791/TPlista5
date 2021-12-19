@@ -6,8 +6,10 @@
 (Leave game) as (leave)
 (Make a move) as (move)
 (Surrender) as (surr)
+(Skipt turn) as (skip)
 user --> join
 user --> leave
 user --> move
 user --> surr
+user --> skip
 @enduml

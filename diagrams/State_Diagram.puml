@@ -6,6 +6,8 @@ scale 350 width
 
 state Turn {
   [*] --> ChooseChecker
+  [*] --> Pass
+  Pass --> WaitingForTurn : Player passes
   ChooseChecker --> CanItMove
   CanItMove --> ChooseChecker : No
   CanItMove --> Move : Yes

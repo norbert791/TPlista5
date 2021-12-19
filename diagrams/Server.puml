@@ -1,0 +1,102 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+note "This interface allows interacting with the board. \n The implementation should check if the move is possible, \n but doesn't need to check neither who's made the move nor if the win conditions" as BoardNote
+note "This interface allows to interact with the game itself. \n It should check win cons and move correctness" as GMnote
+note "Used for player distinction. \n The values' names should be considered symbolic" as ClNote
+note "Used for clearer seat distinction" as Snote
+
+GMnote .. GameMaster
+BoardNote .. Board
+ClNote .. Color
+Snote .. Seat
+
+interface ServerApi
+interface Board
+class Checker
+class Server
+class ArrayBoard
+class SimpleMaster
+class GameMaster
+class Lobby
+enum Color
+enum Seat
+
+Server --|> ServerApi : implements
+Checker "1" --* "*" ArrayBoard
+ArrayBoard --|> Board : implements
+GameMaster ..>  Lobby : uses
+SimpleMaster --|> GameMaster : implements
+SimpleMaster ..> Board : uses
+Color "1" --o "*" Checker
+'Color "1" --o "1" Player
+Lobby "*" --* "1" Server
+Player "0..6" --o Lobby
+
+class Checker{
+   + color : enum
+}
+
+class Player{
+    -isReady : boolean
+    +moveChecker(oldX : int, oldY : int, newX : int, newY : int)  : void
+    +setReady() : void
+    +setNotRead() : void
+}
+
+class ArrayBoard{
+    - checkerList : Array<Array<Checker>>
+}
+
+interface Board{
+    +moveChecker(oldX : int, oldY : int, newX : int, newY : int) : boolean
+    +getChecker(X : int, Y : int) : Checker
+    +addChecker(X : int, Y : int, color : Color) : void
+    +removeChecker(X : int, Y : int) : void
+    +getCheckerArray() :  Array<Array<Checker>>
+}
+
+interface GameMaster{
+    __Meta methods__
+   + addPlayer() : Color
+   + addPlayerAt(seat : Seat) : Color
+   + removePlayer(color : Color)
+   + clearBoard() : void
+   + startGame() : void
+   + isFinished() : Color
+   __Game methods__
+   + moveChecker(oldX : int, oldY : int, newX : int, newY : int, color : Color) : boolean
+
+}
+'For further consideration
+interface ServerApi{
+    +connect(String address, String user, String password) : void
+    +disconnect() : void
+    +sendCommand() : void
+    +retrieveFeedBack() : void
+}
+class SimpleMaster{
+    -colorList : map<Seat,Color>
+    -checkWinConditions(Board, Player) : boolean
+}
+class Lobby{
+    -game : GameMaster
+}
+enum Color{
+    RED
+    GREEN
+    BLUE
+    CYAN
+    MAGENTA
+    YELLOW
+}
+enum Seat{
+    NORTH
+    SOUTH
+    NEAST
+    NWEAST
+    SEAST
+    SWEAST
+}
+
+@enduml

@@ -1,0 +1,13 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Checker
+class Board
+class Player
+class Opponent
+interface ServerApi
+
+Player --|> Opponent : extends
+
+
+@enduml
