@@ -10,7 +10,7 @@ class ClientLogic
 serverListener ..> ServerApi : implements
 ClientLogic ..> ServerApi : uses
 
-interface ServerApi{
+interface ServerApi {
     +connect(address : String, port : Port)
     +joinGame(roomNumber : int)
     +setRead(ready : boolean
