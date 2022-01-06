@@ -1,3 +1,6 @@
+org/IgorNorbert/lista4/AllSeatsTakenException.class
 org/IgorNorbert/lista4/SimpleMaster.class
+org/IgorNorbert/lista4/SeatTakenException.class
+org/IgorNorbert/lista4/IncorrectNumberOfPlayersException.class
 org/IgorNorbert/lista4/Seat.class
 org/IgorNorbert/lista4/GameMaster.class

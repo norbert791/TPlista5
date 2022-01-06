@@ -29,12 +29,6 @@ public class ArrayBoardTest {
         assertThrowsExactly(IncorrectPositionException.class, () ->
                 board.addChecker(rightCoordinates[0], rightCoordinates[1],Color.RED),
                 "This field should be occupied");
-        assertThrowsExactly(IncorrectPositionException.class , () ->
-                board.getCheckerColor(wrongCoordinates[0], wrongCoordinates[1]),
-                "This field should not be available");
-        assertThrowsExactly(IncorrectPositionException.class , () ->
-                        board.getCheckerColor(0, 0),
-                "This field should not be available");
     }
     @Test
     public void moveCheckerTest(){
@@ -64,11 +58,17 @@ public class ArrayBoardTest {
         assertThrowsExactly(IncorrectMoveException.class, () ->
                 board.moveChecker(14, 0, 13, 1), "This move should be illegal");
         //Checking return values of moveChecker function
+    }
+    @Test
+    public void checkMoveReturn(){
+        final ArrayBoard board = new ArrayBoard();
         try{
             board.addChecker(0,4, Color.YELLOW);
             board.addChecker(3,5, Color.RED);
+            board.addChecker(5, 7, Color.CYAN);
             assertFalse(board.moveChecker(0, 4, 2, 4), "False should be returned");
             Assertions.assertTrue(board.moveChecker(2,4,4,6), "True should be returned");
+            Assertions.assertFalse(board.moveChecker(4, 6 , 6, 8), "False should be returned");
         }
         catch (IncorrectPositionException | IncorrectMoveException e){
             fail();
@@ -97,5 +97,17 @@ public class ArrayBoardTest {
         catch (IncorrectPositionException e){
             fail(e.getMessage());
         }
+    }
+    @Test
+    public void setCheckCorner(){
+        ArrayBoard board = new ArrayBoard();
+        for (Seat seat : Seat.values()){
+            board.setCorner(seat, Color.RED);
+            assertTrue(board.checkCorner(seat, Color.RED));
+        }
+        board = new ArrayBoard();
+        board.setCorner(Seat.NORTHEAST, Color.YELLOW);
+        assertFalse(board.checkCorner(Seat.NORTHEAST, Color.RED));
+        assertFalse(board.checkCorner(Seat.SOUTHEAST, Color.CYAN));
     }
 }

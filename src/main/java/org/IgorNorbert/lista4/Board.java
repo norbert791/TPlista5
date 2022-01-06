@@ -5,5 +5,7 @@ public interface Board {
     Color getCheckerColor(int X, int Y) throws IncorrectPositionException;
     void addChecker(int X, int Y, Color color) throws IncorrectPositionException;
     void removeChecker(int X, int Y) throws IncorrectPositionException;
+    void setCorner(Seat seat, Color color);
+    boolean checkCorner(Seat seat, Color color);
     Color[][] getCheckerColorArray();
 }
