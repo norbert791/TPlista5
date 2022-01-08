@@ -2,7 +2,7 @@ package org.IgorNorbert.lista4;
 
 import java.lang.Math;
 
-public class ArrayBoard implements Board{
+public class ArrayBoard implements Board {
     private final int height = 17;
     private final int length = 13;
     private final int midHeight = height / 2;
@@ -271,7 +271,7 @@ public class ArrayBoard implements Board{
                     oldX != currentX + 2 && oldY != currentY + 2;
     }
 
-    public static void main(String args[]){
+  /*  public static void main(String args[]){
         ArrayBoard temp = new ArrayBoard();
         for (Seat seat : Seat.values()
              ) {
@@ -293,5 +293,5 @@ public class ArrayBoard implements Board{
             }
             System.out.print("\n");
         }
-    }
+    }*/
 }

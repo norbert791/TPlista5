@@ -7,5 +7,4 @@ public enum Color {
     CYAN,
     MAGENTA,
     YELLOW,
-
 }

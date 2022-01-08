@@ -48,8 +48,8 @@ public class SimpleMaster implements GameMaster {
         try {
             for (int i = 0; i < array.length; i++) {
                 for (int j = 0; j < array[i].length; j++) {
-                    if (board.getCheckerColor(i, j) != null) {
-                        board.removeChecker(i, j);
+                    if (board.getCheckerColor(j, i) != null) {
+                        board.removeChecker(j, i);
                     }
                 }
             }
@@ -60,7 +60,7 @@ public class SimpleMaster implements GameMaster {
     }
 
     @Override
-    public Color startGame() throws IncorrectNumberOfPlayersException{
+    public Color startGame() throws IncorrectNumberOfPlayersException {
         if(map.keySet().size() < 2 || map.keySet().size() == 5){
             throw new IncorrectNumberOfPlayersException("There must be 2, 3, 4 or 6 players");
         }
@@ -80,6 +80,7 @@ public class SimpleMaster implements GameMaster {
 
     @Override
     public Color getCurrentPlayer(){
+
         return currentPlayer;
     }
 
@@ -89,8 +90,8 @@ public class SimpleMaster implements GameMaster {
     }
 
     @Override
-    public boolean moveChecker(int oldX, int oldY, int newX, int newY, Color color) throws NotThisPlayerTurnException, IncorrectMoveException{
-        boolean nextTurn = false;
+    public boolean moveChecker(int oldX, int oldY, int newX, int newY, Color color) throws NotThisPlayerTurnException, IncorrectMoveException {
+        boolean nextTurn;
         if (currentPlayer != color || color == null){
             throw new NotThisPlayerTurnException("This is not the given player's turn");
         }
@@ -149,35 +150,34 @@ public class SimpleMaster implements GameMaster {
     public void skipTurn(Color color) throws NotThisPlayerTurnException {
         if (currentPlayer == color){
             turn++;
+            currentPlayer = order[turn % order.length];
         }
     }
 
     @Override
-    public void forfeit(Color color) {
+    public void forfeit(Color color) throws NotThisPlayerTurnException{
+        if(currentPlayer != color){
+            throw new NotThisPlayerTurnException("The player may not surrender if it isn't their turn");
+        }
         removePlayer(color);
+        currentPlayer = order[turn % order.length];
+        if (order.length == 5){
+            currentPlayer = null;
+            isFinished = true;
+        }
+        else if(order.length == 1){
+            winOrder.add(currentPlayer);
+            isFinished = true;
+            removePlayer(currentPlayer);
+            currentPlayer = null;
+        }
     }
 
     @Override
     public Color[][] getCheckerArray() {
         return board.getCheckerColorArray();
     }
-   /* private boolean checkWinCondition(Color color){
-        Seat seat = null;
-        for (Seat temp : map.keySet()){
-            if (map.get(temp) == color){
-                seat = temp;
-                break;
-            }
-        }
-        return switch (Objects.requireNonNull(seat)) {
-            case NORTH -> board.checkCorner(Seat.SOUTH, color);
-            case NORTHEAST -> board.checkCorner(Seat.SOUTHWEST, color);
-            case NORTHWEST -> board.checkCorner(Seat.SOUTHEAST, color);
-            case SOUTH -> board.checkCorner(Seat.NORTH, color);
-            case SOUTHEAST -> board.checkCorner(Seat.NORTHWEST, color);
-            case SOUTHWEST -> board.checkCorner(Seat.NORTHEAST, color);
-        };
-    }*/
+
     private void fixPositions(){
         Color[] players = map.values().toArray(new Color[0]);
         switch (players.length) {
@@ -226,9 +226,16 @@ public class SimpleMaster implements GameMaster {
         }
         return result;
     }
-    private void removePlayer(Color color){
-        ArrayList<Color> temp = new ArrayList<>(List.of(order));
-        temp.remove(color);
-        order = temp.toArray(new Color[0]);
+    private void removePlayer(Color color) {
+        if(order != null){
+            ArrayList<Color> temp = new ArrayList<>(List.of(order));
+            temp.remove(color);
+            order = temp.toArray(new Color[0]);
+        }
+        for (Seat temp : map.keySet()){
+            if(map.get(temp) == color){
+                map.remove(temp, color);
+            }
+        }
     }
 }

@@ -3,8 +3,8 @@
 
 note "This interface allows interacting with the board. \n The implementation should check if the move is possible, \n but doesn't need to check neither who's made the move nor the win conditions" as BoardNote
 note "This interface allows to interact with the game itself. \n It should check win cons and move correctness" as GMnote
-note "Used for player distinction. \n The values' names should be considered symbolic" as ClNote
-note "Used for clearer seat distinction" as Snote
+note "Used for player distinction. \n The values' names may be considered symbolic" as ClNote
+note "Used for seat distinction" as Snote
 
 GMnote .. GameMaster
 BoardNote .. Board
@@ -110,12 +110,12 @@ enum Color{
     YELLOW
 }
 enum Seat{
-    NORTH
-    SOUTH
-    NEAST
-    NWEAST
-    SEAST
-    SWEAST
+    NORTH,
+    SOUTH,
+    NORTHEAST,
+    NORTHWEST,
+    SOUTHEAST,
+    SOUTHWEST
 }
 
 @enduml

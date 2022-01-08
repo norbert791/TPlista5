@@ -11,13 +11,13 @@ serverListener ..> ServerApi : implements
 ClientLogic ..> ServerApi : uses
 
 interface ServerApi {
-    +connect(address : String, port : Port)
-    +joinGame(roomNumber : int)
-    +setRead(ready : boolean
-    +moveChecker(oldX, oldY, newX, newY) : void
-    +getColor() : void
-    +getBoard() : Array<Array<Color>>
-    +wait() : void
+    +connect(address : String, port : int, String name) : boolean
+    +joinGame(roomNumber : int) : boolean
+    +setReady(ready : boolean) : void
+    +moveChecker(oldX, oldY, newX, newY) : boolean
+    +getNumber() : Integer
+    +getBoard() : Array<Array<Integer>>
+    +forfeit() : void
 }
 
 @enduml
