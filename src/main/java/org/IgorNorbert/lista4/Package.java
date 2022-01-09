@@ -1,4 +1,4 @@
-package org.IgorNorbert.lista4.Protocol;
+package org.IgorNorbert.lista4;
 
 import java.io.Serializable;
 
@@ -6,11 +6,14 @@ public enum Package implements Serializable {
     MOVE,
     CONNECT,
     JOIN,
+    LEAVE,
     READY,
-    COLOR,
     BOARD,
+    RETURN,
+    ERROR,
+    DISCONNECT,
     FORFEIT;
-    private Serializable argument;
+    private Serializable argument = null;
     public void setArgument(Serializable argument){
         this.argument = argument;
     }
