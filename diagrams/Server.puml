@@ -92,9 +92,9 @@ class Lobby{
     -colorMap : map<Player,Color>
     +removePlayer() : void
     +addPlayer() : void
-    +checkReadiness() : Color
-    +getCheckerArray() : Array<Array<Color>>
-    +moveChecker(player : Player)
+    +getCurrentPlayerNumber() : Integer
+    +getCheckerArray() : Array<Array<Integer>>
+    +moveChecker(oldX : int, oldY: int, newX: int, newY : int, player : Player)
 }
 class Server{
     lobbies : LinkedList<Lobby>

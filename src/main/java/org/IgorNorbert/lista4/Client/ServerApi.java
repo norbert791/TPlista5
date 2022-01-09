@@ -1,6 +1,8 @@
 package org.IgorNorbert.lista4.Client;
 
 
+import java.awt.*;
+
 /**
  * Set of commands that are used for communication with server
  */
@@ -52,7 +54,7 @@ public interface ServerApi {
      * @return 2d array where each field is a positive number iff a player's checker has been put there
      * @throws NotInLobbyException iff you are not in lobby
      */
-    int[][] getBoard() throws NotInLobbyException;
+    Integer[][] getBoard() throws NotInLobbyException;
 
     /**
      * Surrender the game

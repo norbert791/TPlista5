@@ -2,9 +2,7 @@ package org.IgorNorbert.lista4;
 
 import org.IgorNorbert.lista4.*;
 
-public interface GameMaster { //TODO: An idea to reduce dependency on Seat / Color: Consider padding f
-    // TODO: (cont) factory methods that'd return set of possible seats / colors. Make Color and Seat
-    //  TODO: (cont 2) abstract and extend from them.
+public interface GameMaster {
     Color addPlayer() throws AllSeatsTakenException;
     Color addPlayer(Seat seat) throws SeatTakenException;
     void clearBoard();
