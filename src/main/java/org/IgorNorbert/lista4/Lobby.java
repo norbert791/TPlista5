@@ -1,14 +1,12 @@
 package org.IgorNorbert.lista4;
 
-import org.IgorNorbert.lista4.Client.NotInLobbyException;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Lobby {
-    private GameMaster game;
+    private volatile GameMaster game;
     private final int maxNumberOfPlayers = 6;
     private final Map<Player, Color> playerMap = new HashMap<>();
     private final Map<Player, Boolean> readinessMap = new HashMap<>();
@@ -91,7 +89,9 @@ public class Lobby {
             throw new NotThisLobbyException("You are not in this lobby");
         }
         boolean result = game.moveChecker(oldX, oldY, newX, newY, playerMap.get(player));
+        updatePlayerLine();
         updateGameStatus();
+        notifyPlayers();
         return result;
     }
     public synchronized void skipTurn(Player player) throws NotThisLobbyException, NotThisPlayerTurnException {
@@ -102,8 +102,8 @@ public class Lobby {
         updatePlayerLine();
         updateGameStatus();
     }
-    public synchronized Integer[][] getCheckerArray(){
-        if(game == null){
+    public Integer[][] getCheckerArray(){
+        if(game == null) {
             return null;
         }
         final Color[][] colorArray = game.getCheckerArray();
@@ -128,6 +128,7 @@ public class Lobby {
                         playerMap.replace(temp, game.addPlayer());
                     }
                     game.startGame();
+                    notifyPlayers();
                 } catch (AllSeatsTakenException | IncorrectNumberOfPlayersException e) {
                     for (Player temp : playerMap.keySet()){
                         playerMap.replace(temp, null);
@@ -136,8 +137,13 @@ public class Lobby {
                     if (e.getClass() == AllSeatsTakenException.class){
                         e.printStackTrace();
                     }
-                    }
+                }
             }
+        }
+    }
+    private void notifyPlayers(){
+        for (Player temp : playerMap.keySet()){
+            temp.fetchBoard();
         }
     }
 }

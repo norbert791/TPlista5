@@ -2,6 +2,9 @@ package org.IgorNorbert.lista4;
 
 import java.lang.Math;
 
+/**
+ * Implementation of class Board.
+ */
 public class ArrayBoard implements Board {
     private final int height = 17;
     private final int length = 13;
@@ -9,35 +12,40 @@ public class ArrayBoard implements Board {
     private final int midLength = length / 2;
     private final int starSize = 4;
     private final OptionalColor[][] fields;
-    public ArrayBoard(){
+    public ArrayBoard() {
         fields = new OptionalColor[height][length * 2 - 1];
-        for(int i = 0; i < starSize; i++){
-            for( int j = 0; j <= i * 2; j+=2 ){
+        for (int i = 0; i < starSize; i++) {
+            for (int j = 0; j <= i * 2; j += 2) {
                 fields[i][length - 1 - i + j] = new OptionalColor();
                 fields[i][length - 1 - i + j].color = null;
             }
         }
-        for(int i = 4; i <= midHeight; i++){
-            for(int j = i - starSize; j < length * 2 - 1 - (i - starSize); j += 2){
+        for (int i = 4; i <= midHeight; i++) {
+            for (int j = i - starSize;
+                j < length * 2 - 1 - (i - starSize); j += 2) {
                 fields[i][j] = new OptionalColor();
                 fields[i][j].color = null;
             }
         }
-        for(int i = midHeight + 1; i < length; i++){
-            for(int j = starSize - 1 - (i -  midHeight - 1); j < length * 2 - midLength + 1 + (i - midHeight + 1); j+=2){
+        for (int i = midHeight + 1; i < length; i++) {
+            for (int j = starSize - 1 - (i -  midHeight - 1);
+                j < length * 2 - midLength + 1 + (i - midHeight + 1); j += 2){
                 fields[i][j] = new OptionalColor();
                 fields[i][j].color = null;
             }
         }
-        for(int i = length; i < height; i++ ) {
-            for( int j = midHeight + 1 + (i - length); j < height - 1 - (i - length); j += 2){
+        for (int i = length; i < height; i++) {
+            for (int j = midHeight + 1 + (i - length);
+                 j < height - 1 - (i - length); j += 2) {
                 fields[i][j] = new OptionalColor();
                 fields[i][j].color = null;
             }
         }
     }
     @Override
-    public boolean moveChecker(int oldX, int oldY, int newX, int newY) throws IncorrectMoveException {
+    public boolean moveChecker(final int oldX, final int oldY,
+                               final int newX, final int newY)
+            throws IncorrectMoveException {
         final int deltaX = newX - oldX;
         final int deltaY = newY - oldY;
         final int absDeltaX = Math.abs(deltaX);
