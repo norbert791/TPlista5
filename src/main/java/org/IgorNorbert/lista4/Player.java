@@ -210,7 +210,7 @@ public class Player implements Runnable{
                     outputStream.writeObject(message);
                 }
                 wait(500);
-            }catch (ClassNotFoundException | InterruptedException | IOException e) {
+            } catch (ClassNotFoundException | InterruptedException | IOException e) {
                 e.printStackTrace();
             } catch (ClassCastException e){
               message = Package.ERROR;

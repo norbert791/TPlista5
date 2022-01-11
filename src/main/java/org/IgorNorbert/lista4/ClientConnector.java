@@ -4,7 +4,10 @@ package org.IgorNorbert.lista4;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 
 public class ClientConnector implements Runnable{
     private Socket socket;
@@ -15,12 +18,18 @@ public class ClientConnector implements Runnable{
     private String errorMessage = null;
     private Object returnValue = null;
     private boolean connected = true;
+    private volatile Integer playerMove;
     public ClientConnector(String address, int port,
                            final ClientReceiver receiver) {
         this.receiver = receiver;
         try {
             socket = new Socket(address, port);
+           /* InetAddress inetAddress= InetAddress.getByName(address);
+            SocketAddress socketAddress=new InetSocketAddress(inetAddress, port);
+            socket.connect(socketAddress);*/
         } catch (IOException e) {
+            errorMessage = "Connection failed";
+            receiver.sendError();
             e.printStackTrace();
             socket = null;
         }
@@ -30,12 +39,16 @@ public class ClientConnector implements Runnable{
     public void run() {
         final ObjectOutputStream outputStream;
         final ObjectInputStream inputStream;
+        if(socket == null){
+            return;
+        }
         try {
             inputStream = new ObjectInputStream(socket.getInputStream());
             outputStream = new ObjectOutputStream(socket.getOutputStream());
 
         } catch (IOException e) {
-            e.printStackTrace();
+            errorMessage = "Connection failed";
+            receiver.sendError();
             return;
         }
         while(connected) {
@@ -85,7 +98,7 @@ public class ClientConnector implements Runnable{
         nextCommand = temp;
     }
     public synchronized void leave(){
-        nextCommand = Package.READY;
+        nextCommand = Package.LEAVE;
     }
     public synchronized void join(int number){
         Package temp = Package.JOIN;

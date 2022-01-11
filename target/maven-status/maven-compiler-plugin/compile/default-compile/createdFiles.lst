@@ -5,6 +5,7 @@ org/IgorNorbert/lista4/ArrayBoard$OptionalColor.class
 org/IgorNorbert/lista4/Color.class
 org/IgorNorbert/lista4/IncorrectNumberOfPlayersException.class
 org/IgorNorbert/lista4/Seat.class
+org/IgorNorbert/lista4/MenuBar$Ready.class
 org/IgorNorbert/lista4/NotThisPlayerTurnException.class
 org/IgorNorbert/lista4/Lobby.class
 org/IgorNorbert/lista4/Player.class

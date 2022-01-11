@@ -30,6 +30,7 @@ public class Server {
            if(playersList.size() < maxNumberOfConnections){
                Player temp = new Player( this, connection);
                pool.execute(temp);
+               System.out.println("User connected");
            }
         }
     }

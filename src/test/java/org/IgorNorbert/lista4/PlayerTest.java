@@ -32,7 +32,7 @@ public class PlayerTest {
             field.set(player2, lobby);
             Package temp = (Package) join.invoke(player1,0);
             Package temp2 = (Package) join.invoke(player2, 1);
-            assertEquals(temp, Package.RETURN);
+            assertEquals(temp, Package.JOIN);
             assertEquals(temp2, Package.ERROR);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
@@ -68,8 +68,8 @@ public class PlayerTest {
             join.invoke(player2,0);
             Package temp = (Package) setReady.invoke(player1,true);
             Package temp2 = (Package) setReady.invoke(player1, false);
-            assertEquals(temp, Package.RETURN);
-            assertEquals(temp2, Package.RETURN);
+            assertEquals(temp, Package.READY);
+            assertEquals(temp2, Package.READY);
         }catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             fail();
@@ -95,7 +95,7 @@ public class PlayerTest {
             field.set(player1, lobby);
             assertEquals(temp, Package.ERROR);
             temp = (Package) leave.invoke(player1);
-            assertEquals(temp, Package.RETURN);
+            assertEquals(temp, Package.LEAVE);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }

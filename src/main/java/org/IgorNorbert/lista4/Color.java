@@ -29,4 +29,15 @@ public enum Color {
             case YELLOW -> 6;
         };
     }
+    public static Color toColor(Integer integer){
+        return switch (integer){
+            case 1 -> RED;
+            case 2 -> GREEN;
+            case 3 -> BLUE;
+            case 4 -> CYAN;
+            case 5 -> MAGENTA;
+            case 6 -> YELLOW;
+            default -> null;
+        };
+    }
 }
