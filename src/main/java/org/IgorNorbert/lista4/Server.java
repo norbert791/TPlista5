@@ -16,6 +16,7 @@ public class Server {
     private final int maxNumberOfConnections = 36;
     private final ExecutorService pool = Executors.newFixedThreadPool(maxNumberOfConnections);
     private final int portNumber ;
+    private boolean running = true;
     public Server(int portNumber){
         this.portNumber = portNumber;
     }
@@ -24,8 +25,7 @@ public class Server {
     }
     public void start() throws IOException {
         ServerSocket socket = new ServerSocket(portNumber);
-        boolean running = true;
-        while(true){
+        while(running){
            Socket connection = socket.accept();
            if(playersList.size() < maxNumberOfConnections){
                Player temp = new Player( this, connection);
@@ -52,5 +52,8 @@ public class Server {
             e.printStackTrace();
         }
         System.out.println("Server has finished");
+    }
+    public void shutDown(){
+        running = false;
     }
 }

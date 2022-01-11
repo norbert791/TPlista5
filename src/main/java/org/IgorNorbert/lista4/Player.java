@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.prefs.PreferenceChangeEvent;
 
 public class Player implements Runnable{
     private Lobby lobby = null;
@@ -25,7 +26,7 @@ public class Player implements Runnable{
     private Package moveChecker(int oldX, int oldY, int newX, int newY) {
         Package returnInfo;
         if(lobby != null){
-             returnInfo = Package.RETURN;
+             returnInfo = Package.MOVE;
             try {
                returnInfo.setArgument(lobby.moveChecker(oldX, oldY, newX, newY, this));
             } catch (IncorrectMoveException | NotThisLobbyException | NotThisPlayerTurnException e) {
@@ -40,7 +41,7 @@ public class Player implements Runnable{
         return returnInfo;
     }
     private Package setReady(boolean value){
-        Package returnInfo = Package.RETURN;
+        Package returnInfo = Package.READY;
         if(lobby != null){
                 lobby.setReady(this, value);
                 returnInfo.setArgument("Set ready");
@@ -56,7 +57,7 @@ public class Player implements Runnable{
         if(lobby != null){
             lobby.removePlayer(this);
             lobby = null;
-            returnInfo = Package.RETURN;
+            returnInfo = Package.LEAVE;
             returnInfo.setArgument("Left successfully");
         }
         else{
@@ -74,7 +75,7 @@ public class Player implements Runnable{
         try{
             lobbyArray[number].addPlayer(this);
             lobby = lobbyArray[number];
-            result = Package.RETURN;
+            result = Package.JOIN;
             result.setArgument("Joined successfully");
         } catch (LobbyFullException | NotThisLobbyException | IndexOutOfBoundsException e) {
             result = Package.ERROR;
@@ -85,7 +86,7 @@ public class Player implements Runnable{
     private Package getPlayerArray() {
         Package result;
         if(lobby != null){
-            result = Package.RETURN;
+            result = Package.BOARD;
             result.setArgument(lobby.getCheckerArray());
         }
         else {
@@ -97,7 +98,7 @@ public class Player implements Runnable{
     private Package getPlayerInt(){
         Package result;
         if(lobby != null){
-            result = Package.RETURN;
+            result = Package.PLAYERINT;
             result.setArgument(lobby.getPlayerInt(this));
         }
         else {
@@ -108,8 +109,39 @@ public class Player implements Runnable{
     }
     private Package updateLobbyArray(){
         lobbyArray = parent == null ? null : parent.getLobbyArray();
-        Package result = Package.RETURN;
+        Package result = Package.LOBBIES;
         result.setArgument(lobbyArray == null ? null : lobbyArray.length);
+        return result;
+    }
+    private Package skipTurn(){
+        Package result;
+        if(lobby == null){
+            result = Package.ERROR;
+            result.setArgument("You are not on lobby");
+            return result;
+        }
+        try{
+            lobby.skipTurn(this);
+            result = Package.SKIP;
+        } catch (NotThisLobbyException e) {
+            result = Package.ERROR;
+            result.setArgument("You are not in lobby");
+        } catch (NotThisPlayerTurnException e) {
+            result = Package.ERROR;
+            result.setArgument("You may only skip during your turn");
+        }
+        return result;
+    }
+    private Package currentPlayer(){
+        Package result;
+        if (lobby == null) {
+            result = Package.ERROR;
+            result.setArgument("You are not in lobby");
+        }
+        else {
+            result = Package.CURRENT;
+            result.setArgument(lobby.getPlayerInt(lobby.getCurrentPlayer()));
+        }
         return result;
     }
     private void disconnect(){
@@ -131,6 +163,8 @@ public class Player implements Runnable{
                  }
                  case DISCONNECT -> {disconnect(); yield null;}
                  case LOBBIES -> updateLobbyArray();
+                 case SKIP -> skipTurn();
+                 case CURRENT -> currentPlayer();
                  case ERROR, CONNECT, RETURN -> {
                      Package temp = Package.ERROR;
                      temp.setArgument("This command is reserved for server");
@@ -187,6 +221,12 @@ public class Player implements Runnable{
                     ex.printStackTrace();
                 }
             }
+        }
+        try {
+            outputStream.close();
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

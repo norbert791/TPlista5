@@ -14,7 +14,7 @@ public enum Package implements Serializable {
     ERROR,
     DISCONNECT,
     LOBBIES,
-    FORFEIT;
+    FORFEIT, SKIP, CURRENT;
     private Serializable argument = null;
     public void setArgument(Serializable argument){
         this.argument = argument;
