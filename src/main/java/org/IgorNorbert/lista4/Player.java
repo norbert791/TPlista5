@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.Scanner;
+import java.util.prefs.PreferenceChangeEvent;
 
 public class Player implements Runnable{
     private Lobby lobby = null;
@@ -13,8 +13,8 @@ public class Player implements Runnable{
     private final Socket socket;
     private boolean connected = true;
     private boolean boardReady = false;
-    public Player(Lobby[] lobbyArray, Server parent, Socket socket){
-        this.lobbyArray = lobbyArray;
+    public Player( Server parent, Socket socket){
+        this.lobbyArray = parent.getLobbyArray();
         this.parent = parent;
         this.socket = socket;
     }
@@ -26,7 +26,7 @@ public class Player implements Runnable{
     private Package moveChecker(int oldX, int oldY, int newX, int newY) {
         Package returnInfo;
         if(lobby != null){
-             returnInfo = Package.RETURN;
+             returnInfo = Package.MOVE;
             try {
                returnInfo.setArgument(lobby.moveChecker(oldX, oldY, newX, newY, this));
             } catch (IncorrectMoveException | NotThisLobbyException | NotThisPlayerTurnException e) {
@@ -40,8 +40,8 @@ public class Player implements Runnable{
         }
         return returnInfo;
     }
-    private Package setRead(boolean value){
-        Package returnInfo = Package.RETURN;
+    private Package setReady(boolean value){
+        Package returnInfo = Package.READY;
         if(lobby != null){
                 lobby.setReady(this, value);
                 returnInfo.setArgument("Set ready");
@@ -57,7 +57,7 @@ public class Player implements Runnable{
         if(lobby != null){
             lobby.removePlayer(this);
             lobby = null;
-            returnInfo = Package.RETURN;
+            returnInfo = Package.LEAVE;
             returnInfo.setArgument("Left successfully");
         }
         else{
@@ -75,9 +75,9 @@ public class Player implements Runnable{
         try{
             lobbyArray[number].addPlayer(this);
             lobby = lobbyArray[number];
-            result = Package.RETURN;
+            result = Package.JOIN;
             result.setArgument("Joined successfully");
-        } catch (LobbyFullException | NotThisLobbyException e) {
+        } catch (LobbyFullException | NotThisLobbyException | IndexOutOfBoundsException e) {
             result = Package.ERROR;
             result.setArgument(e.getMessage());
         }
@@ -86,7 +86,7 @@ public class Player implements Runnable{
     private Package getPlayerArray() {
         Package result;
         if(lobby != null){
-            result = Package.RETURN;
+            result = Package.BOARD;
             result.setArgument(lobby.getCheckerArray());
         }
         else {
@@ -95,10 +95,53 @@ public class Player implements Runnable{
         }
         return result;
     }
-    private Package updateLobbyList(){
-        lobbyArray = parent == null ? null : parent.getLobbyList();
-        Package result = Package.RETURN;
-        result.setArgument(lobbyArray);
+    private Package getPlayerInt(){
+        Package result;
+        if(lobby != null){
+            result = Package.PLAYERINT;
+            result.setArgument(lobby.getPlayerInt(this));
+        }
+        else {
+            result = Package.ERROR;
+            result.setArgument("You are not in a lobby");
+        }
+        return result;
+    }
+    private Package updateLobbyArray(){
+        lobbyArray = parent == null ? null : parent.getLobbyArray();
+        Package result = Package.LOBBIES;
+        result.setArgument(lobbyArray == null ? null : lobbyArray.length);
+        return result;
+    }
+    private Package skipTurn(){
+        Package result;
+        if(lobby == null){
+            result = Package.ERROR;
+            result.setArgument("You are not on lobby");
+            return result;
+        }
+        try{
+            lobby.skipTurn(this);
+            result = Package.SKIP;
+        } catch (NotThisLobbyException e) {
+            result = Package.ERROR;
+            result.setArgument("You are not in lobby");
+        } catch (NotThisPlayerTurnException e) {
+            result = Package.ERROR;
+            result.setArgument("You may only skip during your turn");
+        }
+        return result;
+    }
+    private Package currentPlayer(){
+        Package result;
+        if (lobby == null) {
+            result = Package.ERROR;
+            result.setArgument("You are not in lobby");
+        }
+        else {
+            result = Package.CURRENT;
+            result.setArgument(lobby.getPlayerInt(lobby.getCurrentPlayer()));
+        }
         return result;
     }
     private void disconnect(){
@@ -110,7 +153,8 @@ public class Player implements Runnable{
          try{
              result = switch (message){
                  case JOIN -> joinLobby((int) message.getArgument());
-                 case READY -> setRead((boolean) message.getArgument());
+                 case PLAYERINT -> getPlayerInt();
+                 case READY -> setReady((boolean) message.getArgument());
                  case LEAVE, FORFEIT -> leave();
                  case BOARD -> getPlayerArray();
                  case MOVE -> {
@@ -118,6 +162,9 @@ public class Player implements Runnable{
                      yield moveChecker(temp[0], temp[1], temp[2], temp[3]);
                  }
                  case DISCONNECT -> {disconnect(); yield null;}
+                 case LOBBIES -> updateLobbyArray();
+                 case SKIP -> skipTurn();
+                 case CURRENT -> currentPlayer();
                  case ERROR, CONNECT, RETURN -> {
                      Package temp = Package.ERROR;
                      temp.setArgument("This command is reserved for server");
@@ -131,15 +178,15 @@ public class Player implements Runnable{
          }
          return result;
     }
-    public void FetchBoard(){
+    public void fetchBoard(){
         boardReady = true;
      }
 
     @Override
     public void run() {
-        ObjectInputStream inputStream = null;
-        ObjectOutputStream outputStream = null;
-        Package message = null;
+        ObjectInputStream inputStream;
+        ObjectOutputStream outputStream;
+        Package message;
         if (socket == null){
             return;
         }
@@ -155,6 +202,7 @@ public class Player implements Runnable{
                 if(boardReady){
                     message = parseCommand(Package.BOARD);
                     outputStream.writeObject(message);
+                    boardReady = false;
                 }
                 else if(inputStream.available() > 0){
                     message = (Package) inputStream.readObject();
@@ -173,6 +221,12 @@ public class Player implements Runnable{
                     ex.printStackTrace();
                 }
             }
+        }
+        try {
+            outputStream.close();
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

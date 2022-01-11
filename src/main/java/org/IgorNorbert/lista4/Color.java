@@ -1,5 +1,8 @@
 package org.IgorNorbert.lista4;
 
+/**
+ * Enum class used for players and checkers distinction
+ */
 public enum Color {
     RED,
     GREEN,
@@ -7,6 +10,12 @@ public enum Color {
     CYAN,
     MAGENTA,
     YELLOW;
+
+    /**
+     * Maps colors to integer values
+     * @param color color whose value we want to retrieve
+     * @return the Integer of chosen color or null if parameter was null
+     */
     public static Integer toInteger(Color color){
         if(color == null){
             return null;

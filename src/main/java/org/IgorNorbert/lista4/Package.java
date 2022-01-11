@@ -9,10 +9,12 @@ public enum Package implements Serializable {
     LEAVE,
     READY,
     BOARD,
+    PLAYERINT,
     RETURN,
     ERROR,
     DISCONNECT,
-    FORFEIT;
+    LOBBIES,
+    FORFEIT, SKIP, CURRENT;
     private Serializable argument = null;
     public void setArgument(Serializable argument){
         this.argument = argument;
