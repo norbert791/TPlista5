@@ -116,6 +116,9 @@ public class Lobby {
         }
         return result;
     }
+    public Color[][] getColorArray(){
+        return this.game.getCheckerArray();
+    }
     public synchronized void setReady(Player player, boolean value) {
         if(readinessMap.containsKey(player)){
             readinessMap.replace(player, value);

@@ -2,7 +2,7 @@ package org.IgorNorbert.lista4;
 
 import java.io.Serializable;
 
-public enum Package implements Serializable {
+public enum NetPackage implements Serializable {
     MOVE,
     CONNECT,
     JOIN,

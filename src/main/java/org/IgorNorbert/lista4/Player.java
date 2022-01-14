@@ -1,12 +1,9 @@
 package org.IgorNorbert.lista4;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.prefs.PreferenceChangeEvent;
 
-public class Player implements Runnable{
+public class Player implements Runnable {
     private Lobby lobby = null;
     private Lobby[] lobbyArray = null;
     private final Server parent;
@@ -23,123 +20,135 @@ public class Player implements Runnable{
         socket = null;
     }
 
-    private Package moveChecker(int oldX, int oldY, int newX, int newY) {
-        Package returnInfo;
+    private NetPackage moveChecker(int oldX, int oldY, int newX, int newY) {
+        NetPackage returnInfo;
         if(lobby != null){
-             returnInfo = Package.MOVE;
+             returnInfo = NetPackage.MOVE;
             try {
                returnInfo.setArgument(lobby.moveChecker(oldX, oldY, newX, newY, this));
             } catch (IncorrectMoveException | NotThisLobbyException | NotThisPlayerTurnException e) {
-               returnInfo = Package.ERROR;
+               returnInfo = NetPackage.ERROR;
                returnInfo.setArgument(e.getMessage());
             }
         }
         else{
-            returnInfo = Package.ERROR;
+            returnInfo = NetPackage.ERROR;
             returnInfo.setArgument("You are not in lobby");
         }
         return returnInfo;
     }
-    private Package setReady(boolean value){
-        Package returnInfo = Package.READY;
+    private NetPackage setReady(boolean value){
+        NetPackage returnInfo = NetPackage.READY;
         if(lobby != null){
                 lobby.setReady(this, value);
                 returnInfo.setArgument("Set ready");
         }
         else{
-            returnInfo = Package.ERROR;
+            returnInfo = NetPackage.ERROR;
             returnInfo.setArgument("You are not in lobby");
         }
         return returnInfo;
     }
-    private Package leave(){
-        Package returnInfo;
+    private NetPackage leave(){
+        NetPackage returnInfo;
         if(lobby != null){
             lobby.removePlayer(this);
             lobby = null;
-            returnInfo = Package.LEAVE;
+            returnInfo = NetPackage.LEAVE;
             returnInfo.setArgument("Left successfully");
         }
         else{
-            returnInfo = Package.ERROR;
+            returnInfo = NetPackage.ERROR;
             returnInfo.setArgument("You are not in lobby");
         }
         return returnInfo;
     }
-    private Package joinLobby(int number) {
-        Package result;
+    private NetPackage joinLobby(int number) {
+        NetPackage result;
         if(lobby != null){
-            result = Package.ERROR;
+            result = NetPackage.ERROR;
             result.setArgument("You already are in a game");
         }
         try{
             lobbyArray[number].addPlayer(this);
             lobby = lobbyArray[number];
-            result = Package.JOIN;
+            result = NetPackage.JOIN;
             result.setArgument("Joined successfully");
         } catch (LobbyFullException | NotThisLobbyException | IndexOutOfBoundsException e) {
-            result = Package.ERROR;
+            result = NetPackage.ERROR;
             result.setArgument(e.getMessage());
         }
         return result;
     }
-    private Package getPlayerArray() {
-        Package result;
+    private NetPackage getPlayerArray() {
+        NetPackage result;
         if(lobby != null){
-            result = Package.BOARD;
+            result = NetPackage.BOARD;
             result.setArgument(lobby.getCheckerArray());
         }
         else {
-            result = Package.ERROR;
+            result = NetPackage.ERROR;
             result.setArgument("You are not in a lobby");
         }
         return result;
     }
-    private Package getPlayerInt(){
-        Package result;
+    private NetPackage getColorArray(){
+        NetPackage result;
         if(lobby != null){
-            result = Package.PLAYERINT;
+            result = NetPackage.BOARD;
+            result.setArgument(lobby.getColorArray());
+        }
+        else{
+            result = NetPackage.ERROR;
+            result.setArgument("Your are not in a lobby");
+        }
+        return result;
+    }
+    private NetPackage getPlayerInt(){
+        NetPackage result;
+        if(lobby != null){
+            result = NetPackage.PLAYERINT;
             result.setArgument(lobby.getPlayerInt(this));
         }
         else {
-            result = Package.ERROR;
+            result = NetPackage.ERROR;
             result.setArgument("You are not in a lobby");
         }
         return result;
     }
-    private Package updateLobbyArray(){
+    private NetPackage updateLobbyArray(){
         lobbyArray = parent == null ? null : parent.getLobbyArray();
-        Package result = Package.LOBBIES;
+        NetPackage result = NetPackage.LOBBIES;
         result.setArgument(lobbyArray == null ? null : lobbyArray.length);
         return result;
     }
-    private Package skipTurn(){
-        Package result;
+    private NetPackage skipTurn(){
+        NetPackage result;
         if(lobby == null){
-            result = Package.ERROR;
+            result = NetPackage.ERROR;
             result.setArgument("You are not on lobby");
             return result;
         }
         try{
             lobby.skipTurn(this);
-            result = Package.SKIP;
+            result = NetPackage.SKIP;
         } catch (NotThisLobbyException e) {
-            result = Package.ERROR;
+            result = NetPackage.ERROR;
             result.setArgument("You are not in lobby");
         } catch (NotThisPlayerTurnException e) {
-            result = Package.ERROR;
+            result = NetPackage.ERROR;
             result.setArgument("You may only skip during your turn");
         }
         return result;
     }
-    private Package currentPlayer(){
-        Package result;
+    private NetPackage currentPlayer(){
+        NetPackage result;
         if (lobby == null) {
-            result = Package.ERROR;
+            result = NetPackage.ERROR;
             result.setArgument("You are not in lobby");
         }
         else {
-            result = Package.CURRENT;
+            result = NetPackage.CURRENT;
             result.setArgument(lobby.getPlayerInt(lobby.getCurrentPlayer()));
         }
         return result;
@@ -147,8 +156,8 @@ public class Player implements Runnable{
     private void disconnect(){
         connected = false;
     }
-    protected Package parseCommand(Package message){
-         Package result = Package.ERROR;
+    protected NetPackage parseCommand(NetPackage message){
+         NetPackage result = NetPackage.ERROR;
          result.setArgument("Command not recognized");
          try{
              result = switch (message){
@@ -166,7 +175,7 @@ public class Player implements Runnable{
                  case SKIP -> skipTurn();
                  case CURRENT -> currentPlayer();
                  case ERROR, CONNECT, RETURN -> {
-                     Package temp = Package.ERROR;
+                     NetPackage temp = NetPackage.ERROR;
                      temp.setArgument("This command is reserved for server");
                      yield temp;
                  }
@@ -184,48 +193,37 @@ public class Player implements Runnable{
 
     @Override
     public void run() {
-        ObjectInputStream inputStream;
-        ObjectOutputStream outputStream;
-        Package message;
-        if (socket == null){
-            return;
-        }
+        NetProtocol protocol = new SimpleNetProtocol();
         try {
-            inputStream = new ObjectInputStream(socket.getInputStream());
-            outputStream = new ObjectOutputStream(socket.getOutputStream());
-            }
-         catch (IOException e) {
+            System.out.println("User run loop started");
+            protocol.setSocket(socket);
+            System.out.println("User run loop started");
+        } catch (IOException e){
+            e.printStackTrace();
+            System.out.println("Exception");
             return;
         }
-        while(connected){
+
+        while (connected){
+            System.out.println("User still connected");
             try{
-                if(boardReady){
-                    message = parseCommand(Package.BOARD);
-                    outputStream.writeObject(message);
+                if(boardReady) {
+                    protocol.sendPackage(getColorArray());
                     boardReady = false;
                 }
-                else if(inputStream.available() > 0){
-                    message = (Package) inputStream.readObject();
-                    message = parseCommand(message);
-                    outputStream.writeObject(message);
+                if(protocol.refresh()){
+                    NetPackage temp = protocol.retrievePackage();
+                    temp = parseCommand(temp);
+                    protocol.sendPackage(temp);
                 }
-                wait(500);
-            } catch (ClassNotFoundException | InterruptedException | IOException e) {
+             //   wait(500);
+            } catch (IOException  /*InterruptedException*/ e) {
                 e.printStackTrace();
-            } catch (ClassCastException e){
-              message = Package.ERROR;
-              message.setArgument("Object not recognized");
-                try {
-                    outputStream.writeObject(message);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
             }
         }
-        try {
-            outputStream.close();
-            inputStream.close();
-        } catch (IOException e) {
+        try{
+            protocol.close();
+        }catch (IOException e){
             e.printStackTrace();
         }
     }

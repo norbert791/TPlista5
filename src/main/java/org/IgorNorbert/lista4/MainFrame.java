@@ -5,33 +5,31 @@ import java.awt.*;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-public class MainFrame extends JFrame implements ClientReceiver, ActionListener{
+public class MainFrame extends JFrame implements UserInterface, ActionListener{
     private LayoutManager layout;
-    private ClientConnector connector;
-    private JPanel boardPanel;
+    private ClientLogic clientLogic;
+    private JPanel boardPanel = null;
     private boolean playerTurn = false;
     private boolean isMovePrepared = false;
     private int boardHeight = 17;
     private int boardLength = 13;
     private int[] coordinates = new int[4];
     private Integer playerInteger= null;
-    private final ExecutorService pool = Executors.newFixedThreadPool(2);
     private CheckerButton[][] buttonArray = new CheckerButton[boardHeight][boardLength];
 
-    public MainFrame(){
+    public MainFrame(ClientLogic clientLogic){
         super("Chinese checkers");
-        //this.setLayout(new GridLayout(1,1));
+        this.clientLogic = clientLogic;
         prepareBoard();
+        //this.setLayout(new GridLayout(1,1));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setBounds(360, 540, 540, 360 );
         this.setJMenuBar(new MenuBar(this));
         this.setVisible(true);
     }
 
-    @Override
+    /*@Override
     public void sendInfo() {
         playerInteger = connector.getPlayerInt();
         Integer[][] temp = connector.getBoard();
@@ -46,13 +44,7 @@ public class MainFrame extends JFrame implements ClientReceiver, ActionListener{
             }
         }
         repaint();
-    }
-
-    @Override
-    public void sendError() {
-
-    }
-
+    }*/
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() instanceof CheckerButton && playerTurn){
@@ -69,6 +61,38 @@ public class MainFrame extends JFrame implements ClientReceiver, ActionListener{
                 isMovePrepared = false;
             }
         }
+    }
+
+    @Override
+    public void printBoard(org.IgorNorbert.lista4.Color[][] board) {
+        if (boardPanel != null) {
+            for (int i = 0; i < boardHeight; i++) {
+                for (int j = 0; j < boardLength; j++) {
+                    if (buttonArray[i][j].getBackground() != Color.BLACK) {
+                        buttonArray[i][j].setBackground(translateColor(board[i][j]));
+                    }
+                }
+            }
+        }
+    }
+    @Override
+    public void setCurrentPlayer(org.IgorNorbert.lista4.Color color) {
+
+    }
+
+    @Override
+    public void setPlayerColor(org.IgorNorbert.lista4.Color color) {
+
+    }
+
+    @Override
+    public void printError(String errorMessage) {
+
+    }
+
+    @Override
+    public void nextMove(boolean nextMove) {
+
     }
 
     private class CheckerButton extends JButton{
@@ -119,29 +143,26 @@ public class MainFrame extends JFrame implements ClientReceiver, ActionListener{
         }
     }
     public void connect(String address){
-        connector = new ClientConnector(address, 7777, this);
-        pool.execute(connector);
-    }
-    public static void main(String[] args){
-        MainFrame frame = new MainFrame();
+        clientLogic.connect(address);
+
     }
     public void join(int lobby) {
-        connector.join(lobby);
+        clientLogic.join(lobby);
     }
     public void leave(){
-        connector.leave();
+        clientLogic.leave();
     }
     public void skipTurn(){
-        connector.skip();
+        clientLogic.skip();
     }
     private void makeMove(){
-        connector.moveChecker(coordinates[0],coordinates[1],coordinates[2],coordinates[3]);
+        clientLogic.moveChecker(coordinates[0],coordinates[1],coordinates[2],coordinates[3]);
     }
     public void disconnect(){
-        connector.disconnect();
+        clientLogic.disconnect();
     }
     public void setReady(boolean value){
-        connector.setReady(value);
+        clientLogic.setReady(value);
     }
     private Color translateColor(org.IgorNorbert.lista4.Color playerColor) {
         return switch (playerColor){

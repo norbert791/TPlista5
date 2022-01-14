@@ -30,10 +30,10 @@ public class PlayerTest {
         try {
             field.set(player1, lobby);
             field.set(player2, lobby);
-            Package temp = (Package) join.invoke(player1,0);
-            Package temp2 = (Package) join.invoke(player2, 1);
-            assertEquals(temp, Package.JOIN);
-            assertEquals(temp2, Package.ERROR);
+            NetPackage temp = (NetPackage) join.invoke(player1,0);
+            NetPackage temp2 = (NetPackage) join.invoke(player2, 1);
+            assertEquals(temp, NetPackage.JOIN);
+            assertEquals(temp2, NetPackage.ERROR);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             fail();
@@ -62,14 +62,14 @@ public class PlayerTest {
         try {
             field.set(player1, lobby);
             field.set(player2, lobby);
-            Package temp0 = (Package) setReady.invoke(player1, true);
-            assertEquals(temp0, Package.ERROR);
+            NetPackage temp0 = (NetPackage) setReady.invoke(player1, true);
+            assertEquals(temp0, NetPackage.ERROR);
             join.invoke(player1,0);
             join.invoke(player2,0);
-            Package temp = (Package) setReady.invoke(player1,true);
-            Package temp2 = (Package) setReady.invoke(player1, false);
-            assertEquals(temp, Package.READY);
-            assertEquals(temp2, Package.READY);
+            NetPackage temp = (NetPackage) setReady.invoke(player1,true);
+            NetPackage temp2 = (NetPackage) setReady.invoke(player1, false);
+            assertEquals(temp, NetPackage.READY);
+            assertEquals(temp2, NetPackage.READY);
         }catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             fail();
@@ -91,11 +91,11 @@ public class PlayerTest {
         try{
             field.setAccessible(true);
             leave.setAccessible(true);
-            Package temp = (Package) leave.invoke(player1);
+            NetPackage temp = (NetPackage) leave.invoke(player1);
             field.set(player1, lobby);
-            assertEquals(temp, Package.ERROR);
-            temp = (Package) leave.invoke(player1);
-            assertEquals(temp, Package.LEAVE);
+            assertEquals(temp, NetPackage.ERROR);
+            temp = (NetPackage) leave.invoke(player1);
+            assertEquals(temp, NetPackage.LEAVE);
         } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
@@ -124,11 +124,11 @@ public class PlayerTest {
             lobby.addPlayer(player2);
             ready.invoke(player1, true);
             ready.invoke(player2, true);
-            Package temp = (Package) getBoard.invoke(player1);
+            NetPackage temp = (NetPackage) getBoard.invoke(player1);
             assertEquals(temp.getArgument().getClass(), Integer[][].class);
             Integer[][] temp2 = (Integer [][]) temp.getArgument();
             assertTrue(temp2[0][12] > 0);
-            assertTrue(((Integer)((Package)getInt.invoke(player1)).getArgument()) > 0);
+            assertTrue(((Integer)((NetPackage)getInt.invoke(player1)).getArgument()) > 0);
         } catch (NoSuchFieldException | NoSuchMethodException |
                 IllegalAccessException | LobbyFullException |
                 NotThisLobbyException | InvocationTargetException e) {

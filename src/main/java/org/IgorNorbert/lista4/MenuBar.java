@@ -91,7 +91,7 @@ public class MenuBar extends JMenuBar implements ActionListener {
                 int result = Integer.parseInt(room);
                 frame.join(result);
             }catch (NumberFormatException ex){
-
+                ex.printStackTrace();
             }
         }
         else if(e.getSource() instanceof Leave ) {

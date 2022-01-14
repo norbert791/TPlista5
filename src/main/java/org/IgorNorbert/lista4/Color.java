@@ -1,9 +1,11 @@
 package org.IgorNorbert.lista4;
 
+import java.io.Serializable;
+
 /**
  * Enum class used for players and checkers distinction
  */
-public enum Color {
+public enum Color implements Serializable {
     RED,
     GREEN,
     BLUE,

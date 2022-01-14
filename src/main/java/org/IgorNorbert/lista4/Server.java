@@ -25,7 +25,7 @@ public class Server {
     }
     public void start() throws IOException {
         ServerSocket socket = new ServerSocket(portNumber);
-        while(running){
+        while(running) {
            Socket connection = socket.accept();
            if(playersList.size() < maxNumberOfConnections){
                Player temp = new Player( this, connection);
@@ -44,8 +44,10 @@ public class Server {
             }
         }
     }
+
     public static void main(String[] args){
         final Server server = new Server(7777);
+        server.addLobby(6);
         System.out.println("Server is running");
         try {
             server.start();
