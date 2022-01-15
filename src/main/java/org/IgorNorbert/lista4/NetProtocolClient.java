@@ -3,7 +3,7 @@ package org.IgorNorbert.lista4;
 import java.io.IOException;
 import java.net.Socket;
 
-public interface NetProtocol {
+public interface NetProtocolClient {
     /**
      * sets socket for this session and opens the connection.
      * @param socket socket for connection with client

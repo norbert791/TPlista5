@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: org.IgorNorbert.lista4.SimpleMasterTest
 -------------------------------------------------------------------------------
-Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.035 s - in org.IgorNorbert.lista4.SimpleMasterTest
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.033 s - in org.IgorNorbert.lista4.SimpleMasterTest

@@ -36,7 +36,7 @@ public class ClientLogic {
     private class ConnectionThread implements Runnable {
         @Override
         public void run() {
-            final NetProtocol protocol = new SimpleNetProtocol();
+            final NetProtocolClient protocol = new SimpleNetProtocolFactory().getClientSide();
             try {
                 protocol.setSocket(socket);
             } catch (IOException e){

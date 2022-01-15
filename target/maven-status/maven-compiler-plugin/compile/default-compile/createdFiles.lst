@@ -3,9 +3,9 @@ org/IgorNorbert/lista4/Board.class
 org/IgorNorbert/lista4/Color.class
 org/IgorNorbert/lista4/IncorrectNumberOfPlayersException.class
 org/IgorNorbert/lista4/NotThisPlayerTurnException.class
-org/IgorNorbert/lista4/NetProtocol.class
 org/IgorNorbert/lista4/Lobby.class
 org/IgorNorbert/lista4/UserInterface.class
+org/IgorNorbert/lista4/SimpleNetProtocolFactory.class
 org/IgorNorbert/lista4/Player.class
 org/IgorNorbert/lista4/Server.class
 org/IgorNorbert/lista4/GameMaster.class
@@ -20,7 +20,6 @@ org/IgorNorbert/lista4/IncorrectMoveException.class
 org/IgorNorbert/lista4/ArrayBoard$OptionalColor.class
 org/IgorNorbert/lista4/Seat.class
 org/IgorNorbert/lista4/MenuBar$Ready.class
-org/IgorNorbert/lista4/SimpleNetProtocol.class
 org/IgorNorbert/lista4/Client/NotInLobbyException.class
 org/IgorNorbert/lista4/Client/ServerApi.class
 org/IgorNorbert/lista4/NetPackage.class

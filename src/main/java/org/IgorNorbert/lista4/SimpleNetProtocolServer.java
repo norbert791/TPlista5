@@ -1,11 +1,12 @@
 package org.IgorNorbert.lista4;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class SimpleNetProtocol implements NetProtocol {
+public class SimpleNetProtocolServer implements NetProtocolServer{
     private Socket socket = null;
     private ObjectInputStream inputStream = null;
     private ObjectOutputStream outputStream = null;
@@ -14,7 +15,7 @@ public class SimpleNetProtocol implements NetProtocol {
     public void setSocket(Socket socket) throws IOException {
         System.out.println("setSocket1");
         if(this.socket != null){
-          this.socket.close();
+            this.socket.close();
         }
         System.out.println("setSocket2");
         if(inputStream != null){
@@ -29,9 +30,9 @@ public class SimpleNetProtocol implements NetProtocol {
         System.out.println("setSocket4");
         this.socket = socket;
         System.out.println("setSocket5");
-        inputStream = new ObjectInputStream(this.socket.getInputStream());
-        System.out.println("setSocket6");
         outputStream = new ObjectOutputStream(this.socket.getOutputStream());
+        System.out.println("setSocket6");
+        inputStream = new ObjectInputStream(this.socket.getInputStream());
         System.out.println("setSocket7");
     }
 
@@ -39,6 +40,7 @@ public class SimpleNetProtocol implements NetProtocol {
     public void sendPackage(NetPackage netPackage) throws IOException{
         if(this.inputStream != null){
             outputStream.writeObject(netPackage);
+            outputStream.flush();
             System.out.println("Sending package");
         }
     }
@@ -51,7 +53,6 @@ public class SimpleNetProtocol implements NetProtocol {
     @Override
     public boolean refresh() throws IOException{
         boolean result = false;
-        if(this.inputStream.available() > 0) {
             try {
                 packageCache = (NetPackage) inputStream.readObject();
                 result = true;
@@ -59,7 +60,6 @@ public class SimpleNetProtocol implements NetProtocol {
             } catch (ClassNotFoundException | ClassCastException e) {
                 e.printStackTrace();
             }
-        }
         return result;
     }
 

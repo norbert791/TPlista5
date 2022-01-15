@@ -3,6 +3,8 @@ package org.IgorNorbert.lista4;
 import java.io.IOException;
 import java.net.Socket;
 
+import static java.lang.Thread.sleep;
+
 public class Player implements Runnable {
     private Lobby lobby = null;
     private Lobby[] lobbyArray = null;
@@ -193,7 +195,7 @@ public class Player implements Runnable {
 
     @Override
     public void run() {
-        NetProtocol protocol = new SimpleNetProtocol();
+        NetProtocolServer protocol = new SimpleNetProtocolFactory().getServerSide();
         try {
             System.out.println("User run loop started");
             protocol.setSocket(socket);
@@ -216,10 +218,11 @@ public class Player implements Runnable {
                     temp = parseCommand(temp);
                     protocol.sendPackage(temp);
                 }
-             //   wait(500);
-            } catch (IOException  /*InterruptedException*/ e) {
+                sleep(500);
+            } catch (IOException | InterruptedException  /*InterruptedException*/ e) {
                 e.printStackTrace();
             }
+
         }
         try{
             protocol.close();
