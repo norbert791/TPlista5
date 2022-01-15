@@ -233,10 +233,10 @@ public class Player implements Runnable {
         }
 
         while (connected){
-            System.out.println("User still connected");
             try {
                 if(protocol.waitForPackage()) {
                     NetPackage temp = protocol.retrievePackage();
+                    System.out.println(temp.type);
                     temp = parseCommand(temp);
                     if(!connected){break;} // This is stupid, refactor it
                     protocol.sendPackage(temp);

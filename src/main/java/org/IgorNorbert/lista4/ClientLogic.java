@@ -63,11 +63,13 @@ public class ClientLogic {
                                 NetPackage temp = new NetPackage();
                                 temp.type = NetPackage.Type.CURRENTPLAYER;
                                 nextCommand.add(temp);
+                                temp = new NetPackage();
                                 temp.type = NetPackage.Type.BOARD;
                                 nextCommand.add(temp);
+                                temp = new NetPackage();
                                 temp.type = NetPackage.Type.PLAYERCOLOR;
                                 nextCommand.add(temp);
-                     //           System.out.println("GAME ISN FUCKINGN ADAETEAR");
+                  //              System.out.println("GAME ISN FUCKING ");
                             }
                             else{
                                 NetPackage temp = new NetPackage();
@@ -121,7 +123,7 @@ public class ClientLogic {
         temp.type = NetPackage.Type.READY;
         temp.setArgument(value);
         nextCommand.add(temp);
-        System.out.println("Client queued ready");
+       // System.out.println("Client queued ready");
     }
     public synchronized void leave(){
         NetPackage temp = new NetPackage();

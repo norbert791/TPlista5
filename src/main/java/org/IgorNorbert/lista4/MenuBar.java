@@ -1,12 +1,15 @@
 package org.IgorNorbert.lista4;
 
 import javax.swing.*;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MenuBar extends JMenuBar implements ActionListener {
     private MainFrame frame;
-    public MenuBar(MainFrame frame){
+    private JMenu playerColor;
+    private JMenu currentColor;
+    public MenuBar(MainFrame frame) {
         this.frame = frame;
         Join temp = new Join();
         JMenuItem tempItem = new Connect();
@@ -31,6 +34,22 @@ public class MenuBar extends JMenuBar implements ActionListener {
         tempItem.addActionListener(this);
         temp2.add(tempItem);
         this.add(temp2);
+        JMenu temp3 = new JMenu("Your color");
+        temp3.setEnabled(false);
+        this.add(temp3);
+        playerColor = new JMenu();
+        playerColor.setEnabled(false);
+        playerColor.setBackground(Color.black);
+        playerColor.setOpaque(true);
+        this.add(playerColor);
+        temp3 = new JMenu("Current color");
+        temp3.setEnabled(false);
+        this.add(temp3);
+        currentColor = new JMenu();
+        currentColor.setEnabled(false);
+        currentColor.setBackground(Color.black);
+        currentColor.setOpaque(true);
+        this.add(currentColor);
     }
     private class Join extends JMenu{
         Join(){
@@ -71,6 +90,14 @@ public class MenuBar extends JMenuBar implements ActionListener {
         Ready(){
             super("SetReady");
         }
+    }
+    public void setPlayerColor(Color color){
+        this.playerColor.setBackground(color);
+        repaint();
+    }
+    public void setCurrentColor(Color color){
+        this.currentColor.setBackground(color);
+        repaint();
     }
     @Override
     public void actionPerformed(ActionEvent e){

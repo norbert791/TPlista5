@@ -279,7 +279,7 @@ public class ArrayBoard implements Board {
                     oldX != currentX + 2 && oldY != currentY + 2;
     }
 
-  /*  public static void main(String args[]){
+    public static void main(String args[]){
         ArrayBoard temp = new ArrayBoard();
         for (Seat seat : Seat.values()
              ) {
@@ -301,5 +301,5 @@ public class ArrayBoard implements Board {
             }
             System.out.print("\n");
         }
-    }*/
+    }
 }

@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainFrame extends JFrame implements UserInterface, ActionListener{
+    private MenuBar menuBar;
     private LayoutManager layout;
     private ClientLogic clientLogic;
     private JPanel boardPanel = null;
@@ -16,6 +17,8 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
     private int boardLength = 13;
     private int[] coordinates = new int[4];
     private Integer playerInteger= null;
+    private org.IgorNorbert.lista4.Color playerColor;
+    private org.IgorNorbert.lista4.Color currentPlayerColor;
     private CheckerButton[][] buttonArray = new CheckerButton[boardHeight][boardLength];
 
     public MainFrame(ClientLogic clientLogic){
@@ -25,7 +28,8 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
         //this.setLayout(new GridLayout(1,1));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setBounds(360, 540, 540, 360 );
-        this.setJMenuBar(new MenuBar(this));
+        this.menuBar = new MenuBar(this);
+        this.setJMenuBar(menuBar);
         this.setVisible(true);
     }
 
@@ -47,16 +51,26 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
     }*/
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() instanceof CheckerButton && playerTurn){
+        if (e.getSource() instanceof CheckerButton && currentPlayerColor == playerColor) {
+            System.out.println("ButtonClicked");
             CheckerButton temp = (CheckerButton) e.getSource();
-            if(!isMovePrepared){
+            if(temp.getBackground() == Color.BLACK){
+                this.isMovePrepared = false;
+            }
+            else if(!isMovePrepared){
                 coordinates[0] = temp.x;
                 coordinates[1] = temp.y;
                 isMovePrepared = true;
+                System.out.println("Old pos selected");
             }
             else if(isMovePrepared){
                 coordinates[2] = temp.x;
                 coordinates[3] = temp.y;
+                if(temp.x == coordinates[0] && temp.y == coordinates[1]){
+                    isMovePrepared = false;
+                    return;
+                }
+                System.out.println("New pos selected");
                 makeMove();
                 isMovePrepared = false;
             }
@@ -67,7 +81,7 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
     public void printBoard(org.IgorNorbert.lista4.Color[][] board) {
         if (boardPanel != null) {
             for (int i = 0; i < boardHeight; i++) {
-                for (int j = 0; j < boardLength; j++) {
+                for (int j = 0; j < boardLength * 2 - 1; j++) {
                     if (buttonArray[i][j].getBackground() != Color.BLACK) {
                         buttonArray[i][j].setBackground(translateColor(board[i][j]));
                     }
@@ -75,16 +89,18 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
             }
         }
         repaint();
-        System.out.println("Board colored");
+   //     System.out.println("Board colored");
     }
     @Override
     public void setCurrentPlayer(org.IgorNorbert.lista4.Color color) {
-
+        this.currentPlayerColor = color;
+        this.menuBar.setCurrentColor(translateColor(color));
     }
 
     @Override
     public void setPlayerColor(org.IgorNorbert.lista4.Color color) {
-
+        this.playerColor = color;
+        this.menuBar.setPlayerColor(translateColor(color));
     }
 
     @Override
@@ -117,7 +133,9 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
                 temp[i][j].y = i;
                 temp[i][j].setPreferredSize(new Dimension(15,30));
                 temp[i][j].setBackground(java.awt.Color.BLACK);
+                temp[i][j].addActionListener(this);
                 boardPanel.add(temp[i][j]);
+                this.buttonArray = temp;
             }
         }
         for (int i = 0; i < starSize; i++) {
@@ -167,6 +185,9 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
         clientLogic.setReady(value);
     }
     private Color translateColor(org.IgorNorbert.lista4.Color playerColor) {
+        if(playerColor == null){
+            return Color.WHITE;
+        }
         return switch (playerColor){
             case YELLOW -> Color.yellow;
             case MAGENTA -> Color.magenta;

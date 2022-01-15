@@ -107,6 +107,7 @@ public class Lobby {
         if(game == null) {
             return null;
         }
+        System.out.println("retrieving board from gameMaster");
         Color[][] result = game.getCheckerArray();
         /*final Color[][] colorArray = game.getCheckerArray();
         Integer[][] result = new Integer[colorArray.length][];
@@ -119,7 +120,7 @@ public class Lobby {
         return result;
     }
     public Color[][] getColorArray(){
-        return this.game.getCheckerArray();
+        return this.game == null ? null : this.game.getCheckerArray();
     }
     public synchronized void setReady(Player player, boolean value) {
         if(readinessMap.containsKey(player)) {
