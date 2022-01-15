@@ -25,7 +25,7 @@ public interface NetProtocolClient {
      * Reads stream from socket if possible.
      * @return true iff new package was received
      */
-    boolean refresh() throws IOException;
+    boolean isReady() throws IOException;
 
     /**
      * Closes the connection.

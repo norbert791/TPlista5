@@ -24,6 +24,7 @@ public class MenuBar extends JMenuBar implements ActionListener {
         tempItem.addActionListener(this);
         temp2.add(tempItem);
         tempItem = new Ready();
+        tempItem.addActionListener(this);
         temp2.add(tempItem);
         temp2.add(tempItem);
         tempItem = new SkipTurn();

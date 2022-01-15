@@ -88,12 +88,12 @@ public class LobbyTest {
         catch (LobbyFullException | NotThisLobbyException e){
             e.printStackTrace();
         }
-        Integer[][] array = test.getCheckerArray();
+        Color[][] array = test.getCheckerArray();
         boolean [] booleanArray = {false, false, false, false , false, false};
-        for(Integer[] tempArray : array){
-            for(Integer temp : tempArray){
+        for(Color[] tempArray : array){
+            for(Color temp : tempArray){
                 if(temp != null){
-                    booleanArray[temp] = true;
+                    booleanArray[Color.toInteger(temp)] = true;
                 }
             }
         }
@@ -105,7 +105,7 @@ public class LobbyTest {
         }
         assertEquals(counter, 2);
         Player currentPlayer = test.getCurrentPlayer();
-        if(Objects.equals(array[3][9], test.getPlayerInt(currentPlayer))){
+        if(Objects.equals(array[3][9], test.getPlayerColor(currentPlayer))){
            assertDoesNotThrow(() -> test.moveChecker(9, 3,10,4,currentPlayer));
         }
         else{

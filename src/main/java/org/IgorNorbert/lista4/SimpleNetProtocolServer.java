@@ -13,27 +13,20 @@ public class SimpleNetProtocolServer implements NetProtocolServer{
     private NetPackage packageCache;
     @Override
     public void setSocket(Socket socket) throws IOException {
-        System.out.println("setSocket1");
         if(this.socket != null){
             this.socket.close();
         }
-        System.out.println("setSocket2");
         if(inputStream != null){
             inputStream.close();
             outputStream = null;
         }
-        System.out.println("setSocket3");
         if(outputStream != null){
             outputStream.close();
             outputStream = null;
         }
-        System.out.println("setSocket4");
         this.socket = socket;
-        System.out.println("setSocket5");
         outputStream = new ObjectOutputStream(this.socket.getOutputStream());
-        System.out.println("setSocket6");
         inputStream = new ObjectInputStream(this.socket.getInputStream());
-        System.out.println("setSocket7");
     }
 
     @Override
@@ -41,7 +34,7 @@ public class SimpleNetProtocolServer implements NetProtocolServer{
         if(this.inputStream != null){
             outputStream.writeObject(netPackage);
             outputStream.flush();
-            System.out.println("Sending package");
+  //          System.out.println("Sending package");
         }
     }
 
@@ -51,12 +44,12 @@ public class SimpleNetProtocolServer implements NetProtocolServer{
     }
 
     @Override
-    public boolean refresh() throws IOException{
+    public boolean waitForPackage() throws IOException {
         boolean result = false;
             try {
                 packageCache = (NetPackage) inputStream.readObject();
                 result = true;
-                System.out.println("Refreshing package");
+     //           System.out.println("Refreshing package");
             } catch (ClassNotFoundException | ClassCastException e) {
                 e.printStackTrace();
             }

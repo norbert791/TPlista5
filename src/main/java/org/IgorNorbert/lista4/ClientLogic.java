@@ -8,15 +8,17 @@ import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static java.lang.Thread.sleep;
+
 public class ClientLogic {
     private final int portNumber = 7777;
     private Socket socket;
-    private volatile Integer[][] arrayBuffer;
     private volatile Integer playerInt = null;
     private volatile Queue<NetPackage> nextCommand = new LinkedList<>();
-    private String errorMessage = null;
-    private Object returnValue = null;
+    private boolean inLobby = false;
+    private boolean gameStarted = false;
     private boolean connected = true;
+    private String errorMessage;
     private volatile Integer playerMove;
     private final ExecutorService pool = Executors.newFixedThreadPool(2);
     private final UserInterface userInterface;
@@ -36,6 +38,7 @@ public class ClientLogic {
     private class ConnectionThread implements Runnable {
         @Override
         public void run() {
+
             final NetProtocolClient protocol = new SimpleNetProtocolFactory().getClientSide();
             try {
                 protocol.setSocket(socket);
@@ -43,18 +46,37 @@ public class ClientLogic {
                 e.printStackTrace();
                 return;
             }
-            System.out.println("Thread working");
-            while(connected) {
-                try{
 
-                    if(protocol.refresh()){
+            while(connected) {
+        //        System.out.println("Thread working");
+                try{
+                    if(protocol.isReady()){
                         NetPackage temp = protocol.retrievePackage();
                         decodePackage(temp);
                     }
-                    if(nextCommand.size() > 0){
+                    if(!nextCommand.isEmpty()){
                         protocol.sendPackage(nextCommand.remove());
                     }
-                    wait(500);
+                    else{
+                        if(inLobby){
+                            if(gameStarted) {
+                                NetPackage temp = new NetPackage();
+                                temp.type = NetPackage.Type.CURRENTPLAYER;
+                                nextCommand.add(temp);
+                                temp.type = NetPackage.Type.BOARD;
+                                nextCommand.add(temp);
+                                temp.type = NetPackage.Type.PLAYERCOLOR;
+                                nextCommand.add(temp);
+                     //           System.out.println("GAME ISN FUCKINGN ADAETEAR");
+                            }
+                            else{
+                                NetPackage temp = new NetPackage();
+                                temp.type = NetPackage.Type.CURRENTPLAYER;
+                                nextCommand.add(temp);
+                            }
+                        }
+                    }
+                    sleep(500);
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -64,50 +86,67 @@ public class ClientLogic {
 
     private synchronized void decodePackage(NetPackage result){
         try {
-            switch (result) {
+            switch (result.type) {
                 case ERROR ->
                     userInterface.printError((String) result.getArgument());
-                case CURRENT -> userInterface.setCurrentPlayer((Color) result.getArgument());
+                case CURRENTPLAYER -> {
+                    if(result.getArgument() == null){
+                        gameStarted = false;
+                    }
+                    else{
+                        gameStarted = true;
+                        userInterface.setCurrentPlayer((Color) result.getArgument());
+                    }
+                }
                 case MOVE -> userInterface.nextMove((boolean) result.getArgument());
                 case BOARD -> userInterface.printBoard((Color[][]) result.getArgument());
-                case PLAYERINT -> userInterface.setPlayerColor((Color) result.getArgument());
+                case PLAYERCOLOR -> userInterface.setPlayerColor((Color) result.getArgument());
+                case JOIN -> this.inLobby = true;
+                case LEAVE -> this.inLobby = false;
+                case READY -> System.out.println((String) result.getArgument());
             }
-        }catch (ClassCastException e){
+        } catch (ClassCastException e){
             e.printStackTrace();
         }
     }
 
     public synchronized void moveChecker(int oldX, int oldY, int newX, int newY){
-        NetPackage temp = NetPackage.MOVE;
+        NetPackage temp = new NetPackage();
+        temp.type = NetPackage.Type.MOVE;
         temp.setArgument(new int[]{oldX, oldY, newX, newY});
         nextCommand.add(temp);
     }
     public synchronized void setReady(boolean value){
-        NetPackage temp = NetPackage.READY;
+        NetPackage temp = new NetPackage();
+        temp.type = NetPackage.Type.READY;
         temp.setArgument(value);
         nextCommand.add(temp);
+        System.out.println("Client queued ready");
     }
     public synchronized void leave(){
-        nextCommand.add(NetPackage.LEAVE);;
+        NetPackage temp = new NetPackage();
+        temp.type = NetPackage.Type.LEAVE;
+        nextCommand.add(temp);;
     }
     public synchronized void join(int number){
-        NetPackage temp = NetPackage.JOIN;
+        NetPackage temp = new NetPackage();
+        temp.type = NetPackage.Type.JOIN;
         temp.setArgument(number);
         nextCommand.add(temp);
     }
-
     public Integer getPlayerInt() {
         return playerInt;
     }
-    public Integer[][] getBoard(){
-        return arrayBuffer;
-    }
     public void skip(){
-        nextCommand.add(NetPackage.SKIP);
+        NetPackage temp = new NetPackage();
+        temp.type = NetPackage.Type.SKIP;
+        nextCommand.add(temp);
     }
     public void disconnect(){
+        NetPackage temp = new NetPackage();
+        temp.type = NetPackage.Type.DISCONNECT;
         nextCommand.clear();
-        nextCommand.add(NetPackage.DISCONNECT); //TODO: this requires improvement -> not thread safe
+        nextCommand.add(temp); //TODO: this requires improvement -> not thread safe
         this.connected = false;
     }
     public static void main(String[] args){

@@ -20,10 +20,11 @@ public class SimpleNetProtocolTest {
                 Socket serverSocket = tempSocket.accept();
                 SimpleNetProtocolServer server = new SimpleNetProtocolServer();
                 server.setSocket(serverSocket);
-                NetPackage temp1 = NetPackage.READY;
+                NetPackage temp1 = new NetPackage();
+                temp1.type = NetPackage.Type.JOIN;
                 temp1.setArgument(5);
                 server.sendPackage(temp1);
-                server.refresh();
+                server.waitForPackage();
                 temp1 = server.retrievePackage();
                 Assertions.assertEquals((String) temp1.getArgument(), "5");
             } catch (IOException e) {
@@ -38,10 +39,11 @@ public class SimpleNetProtocolTest {
                 SimpleNetProtocolClient client = new SimpleNetProtocolClient();
                 client.setSocket(clientSocket);
                 NetPackage temp2;
-                client.refresh();
+                client.isReady();
                 temp2 = client.retrievePackage();
                 Assertions.assertEquals((int) temp2.getArgument(), 5);
-                temp2 = NetPackage.MOVE;
+                temp2 = new NetPackage();
+                temp2.type = NetPackage.Type.ERROR;
                 temp2.setArgument("5");
                 client.sendPackage(temp2);
             } catch (IOException e) {

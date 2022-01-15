@@ -27,7 +27,7 @@ public interface NetProtocolServer {
      * @return true iff new package was received
      * @throws IOException
      */
-    boolean refresh() throws IOException;
+    boolean waitForPackage() throws IOException;
 
     /**
      * Closes the connection.

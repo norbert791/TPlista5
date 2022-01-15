@@ -28,6 +28,7 @@ public class Lobby {
         }
         playerMap.put(player, null);
         readinessMap.put(player, false);
+        System.out.println("Player joined");
     }
     public synchronized void removePlayer(Player player){
         if(!playerMap.containsKey(player)){
@@ -68,8 +69,8 @@ public class Lobby {
     public Player[] getWinnerLine(){
         return winnersLine.toArray(new Player[0]);
     }
-    public synchronized Integer getPlayerInt(Player player){
-        return Color.toInteger(playerMap.get(player));
+    public synchronized Color getPlayerColor(Player player){
+        return playerMap.get(player);
     }
     public synchronized Player getCurrentPlayer(){
         if(game == null){
@@ -102,25 +103,26 @@ public class Lobby {
         updatePlayerLine();
         updateGameStatus();
     }
-    public Integer[][] getCheckerArray(){
+    public Color[][] getCheckerArray(){
         if(game == null) {
             return null;
         }
-        final Color[][] colorArray = game.getCheckerArray();
+        Color[][] result = game.getCheckerArray();
+        /*final Color[][] colorArray = game.getCheckerArray();
         Integer[][] result = new Integer[colorArray.length][];
         for(int i = 0; i < colorArray.length; i++){
             result[i] = new Integer[colorArray[i].length];
             for(int j = 0; j < colorArray[i].length; j++){
                 result[i][j] = Color.toInteger (colorArray[i][j]);
             }
-        }
+        }*/
         return result;
     }
     public Color[][] getColorArray(){
         return this.game.getCheckerArray();
     }
     public synchronized void setReady(Player player, boolean value) {
-        if(readinessMap.containsKey(player)){
+        if(readinessMap.containsKey(player)) {
             readinessMap.replace(player, value);
             // Start game
             if(!readinessMap.containsValue(false) && readinessMap.size() > 1 &&
@@ -129,9 +131,11 @@ public class Lobby {
                     game = new SimpleMaster();
                     for (Player temp : playerMap.keySet()) {
                         playerMap.replace(temp, game.addPlayer());
+                        System.out.println("Player ready");
                     }
                     game.startGame();
                     notifyPlayers();
+                    System.out.println("Game has started");
                 } catch (AllSeatsTakenException | IncorrectNumberOfPlayersException e) {
                     for (Player temp : playerMap.keySet()){
                         playerMap.replace(temp, null);

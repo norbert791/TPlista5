@@ -74,6 +74,8 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
                 }
             }
         }
+        repaint();
+        System.out.println("Board colored");
     }
     @Override
     public void setCurrentPlayer(org.IgorNorbert.lista4.Color color) {
