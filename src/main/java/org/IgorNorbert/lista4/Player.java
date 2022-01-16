@@ -181,8 +181,10 @@ public class Player implements Runnable {
         return result;
     }
     private void disconnect(){
-        //TODO: close file streams
         connected = false;
+        if(lobby != null){
+            lobby.removePlayer(this);
+        }
     }
     protected NetPackage parseCommand(NetPackage message){
          NetPackage result = new NetPackage();
@@ -232,23 +234,31 @@ public class Player implements Runnable {
             return;
         }
 
-        while (connected){
+        while (connected) {
             try {
                 if(protocol.waitForPackage()) {
                     NetPackage temp = protocol.retrievePackage();
-                    System.out.println(temp.type);
+      //              System.out.println(temp.type);
                     temp = parseCommand(temp);
                     if(!connected){break;} // This is stupid, refactor it
                     protocol.sendPackage(temp);
                 }
                 sleep(500);
-            } catch (IOException | InterruptedException  /*InterruptedException*/ e) {
-                e.printStackTrace();
+            } catch (IOException e) {
+                if(lobby != null){
+                    lobby.removePlayer(this);
+                }
+                return;
+            } catch (InterruptedException e) {
+                connected = false;
+                if(lobby != null){
+                    lobby.removePlayer(this);
+                }
             }
         }
         try{
             protocol.close();
-        }catch (IOException e){
+        } catch (IOException e){
             e.printStackTrace();
         }
     }

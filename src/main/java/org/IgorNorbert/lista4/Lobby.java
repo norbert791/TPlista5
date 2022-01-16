@@ -107,7 +107,7 @@ public class Lobby {
         if(game == null) {
             return null;
         }
-        System.out.println("retrieving board from gameMaster");
+  //      System.out.println("retrieving board from gameMaster");
         Color[][] result = game.getCheckerArray();
         /*final Color[][] colorArray = game.getCheckerArray();
         Integer[][] result = new Integer[colorArray.length][];

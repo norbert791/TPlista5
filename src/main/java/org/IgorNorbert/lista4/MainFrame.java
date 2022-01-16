@@ -52,7 +52,6 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() instanceof CheckerButton && currentPlayerColor == playerColor) {
-            System.out.println("ButtonClicked");
             CheckerButton temp = (CheckerButton) e.getSource();
             if(temp.getBackground() == Color.BLACK){
                 this.isMovePrepared = false;
@@ -61,7 +60,6 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
                 coordinates[0] = temp.x;
                 coordinates[1] = temp.y;
                 isMovePrepared = true;
-                System.out.println("Old pos selected");
             }
             else if(isMovePrepared){
                 coordinates[2] = temp.x;
@@ -105,7 +103,7 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
 
     @Override
     public void printError(String errorMessage) {
-
+        JOptionPane.showMessageDialog(this, errorMessage);
     }
 
     @Override
@@ -124,6 +122,7 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
         final int midLength = boardLength / 2;
         final int starSize = 4;
         this.add(boardPanel);
+        boardPanel.setBackground(Color.black);
         boardPanel.setLayout(new GridLayout(boardHeight, boardLength * 2));
         CheckerButton[][] temp = new CheckerButton[boardHeight][boardLength * 2];
         for( int i = 0; i < boardHeight; i++){
@@ -134,6 +133,8 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
                 temp[i][j].setPreferredSize(new Dimension(15,30));
                 temp[i][j].setBackground(java.awt.Color.BLACK);
                 temp[i][j].addActionListener(this);
+                temp[i][j].setEnabled(false);
+                temp[i][j].setVisible(false);
                 boardPanel.add(temp[i][j]);
                 this.buttonArray = temp;
             }
@@ -141,30 +142,37 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
         for (int i = 0; i < starSize; i++) {
             for (int j = 0; j <= i * 2; j += 2) {
                 temp[i][boardLength - 1 - i + j].setBackground(java.awt.Color.white);
+                temp[i][boardLength - 1 - i + j].setEnabled(true);
+                temp[i][boardLength - 1 - i + j].setVisible(true);
             }
         }
         for (int i = 4; i <= midHeight; i++) {
             for (int j = i - starSize;
                  j < boardLength * 2 - 1 - (i - starSize); j += 2) {
                 temp[i][j].setBackground(java.awt.Color.white);
+                temp[i][j].setEnabled(true);
+                temp[i][j].setVisible(true);
             }
         }
         for (int i = midHeight + 1; i < boardLength; i++) {
             for (int j = starSize - 1 - (i -  midHeight - 1);
                  j < boardLength * 2 - midLength + 1 + (i - midHeight + 1); j += 2){
                 temp[i][j].setBackground(java.awt.Color.white);
+                temp[i][j].setEnabled(true);
+                temp[i][j].setVisible(true);
             }
         }
         for (int i = boardLength; i < boardHeight; i++) {
             for (int j = midHeight + 1 + (i - boardLength);
                  j < boardHeight - 1 - (i - boardLength); j += 2) {
                 temp[i][j].setBackground(Color.white);
+                temp[i][j].setEnabled(true);
+                temp[i][j].setVisible(true);
             }
         }
     }
     public void connect(String address){
         clientLogic.connect(address);
-
     }
     public void join(int lobby) {
         clientLogic.join(lobby);
