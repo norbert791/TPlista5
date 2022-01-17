@@ -25,6 +25,30 @@ public class NetPackage implements Serializable {
         SKIP,
         CURRENTPLAYER;
     }
+
+    /**
+     * This package is purely to save a line per package creation.
+     */
+    public NetPackage(NetPackage.Type type, Serializable argument){
+        this.type = type;
+        this.argument = argument;
+    }
+    /**
+     * This constructor is purely to save a line per package creation.
+     * @param type
+     */
+    public NetPackage(NetPackage.Type type) {
+        this.type = type;
+        this.argument = null;
+    }
+
+    /**
+     * Default constructor
+     */
+    public NetPackage() {
+        this.type = null;
+        this.argument = null;
+    }
     public Type type;
     /**
      * Argument for command to used for managing the command

@@ -94,6 +94,11 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
 
     }
 
+    @Override
+    public void printLobbyList(int[] lobbies) {
+
+    }
+
     private class CheckerButton extends JButton{
         public int x;
         public int y;

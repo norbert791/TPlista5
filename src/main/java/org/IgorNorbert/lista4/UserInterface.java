@@ -33,4 +33,10 @@ public interface UserInterface {
      * @param nextMove insert true iff client may make another move
      */
     void nextMove(boolean nextMove);
+
+    /**
+     * Prints the list of lobbies on UI
+     * @param lobbies Array of lobbies where index is lobby number and value is number of players in lobby.
+     */
+    void printLobbyList(int[] lobbies);
 }

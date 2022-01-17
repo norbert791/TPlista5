@@ -11,7 +11,6 @@
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Client/ChoseColor.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/AllSeatsTakenException.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Client/GameFrame.java
-/home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/ClientReceiver.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Client/Test.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/NetPackage.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Player.java
@@ -34,4 +33,3 @@
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/SimpleNetProtocolServer.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/IncorrectNumberOfPlayersException.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/MenuBar.java
-/home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/StartFailedException.java

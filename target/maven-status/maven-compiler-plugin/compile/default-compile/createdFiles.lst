@@ -1,6 +1,7 @@
 org/IgorNorbert/lista4/SimpleMaster.class
 org/IgorNorbert/lista4/Board.class
 org/IgorNorbert/lista4/Color.class
+org/IgorNorbert/lista4/ClientLogic$State.class
 org/IgorNorbert/lista4/IncorrectNumberOfPlayersException.class
 org/IgorNorbert/lista4/NotThisPlayerTurnException.class
 org/IgorNorbert/lista4/Lobby.class

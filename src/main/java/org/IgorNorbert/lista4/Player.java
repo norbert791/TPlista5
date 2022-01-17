@@ -95,7 +95,6 @@ public class Player implements Runnable {
         return result;
     }
     private NetPackage getPlayerArray() {
-        System.out.println("Color board requested");
         NetPackage result;
         if(lobby != null){
             result = new NetPackage();
