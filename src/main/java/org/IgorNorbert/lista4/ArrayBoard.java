@@ -90,34 +90,29 @@ public class ArrayBoard implements Board {
                     || fields[oldY][oldX] == null || fields[oldY][oldX].
                      color == null) {
                 throw new IncorrectMoveException("The move is not possible");
-            }
-            else if (absDeltaX == absDeltaY && absDeltaY == 1) {
+            } else if (absDeltaX == absDeltaY && absDeltaY == 1) {
                 fields[newY][newX].color = fields[oldY][oldX].color;
                 fields[oldY][oldX].color = null;
-            }
-            else if (absDeltaX == absDeltaY && absDeltaY == 2
+            } else if (absDeltaX == absDeltaY && absDeltaY == 2
                      && fields[oldY + deltaY / 2]
                      [oldX + deltaX / 2].color != null) {
                 fields[newY][newX].color = fields[oldY][oldX].color;
                 fields[oldY][oldX].color = null;
                 result = isAnotherJumpPossible(oldX, oldY, newX, newY);
-            }
-            else if (absDeltaY == 0 && absDeltaX == 2) {
+            } else if (absDeltaY == 0 && absDeltaX == 2) {
                 fields[newY][newX].color = fields[oldY][oldX].color;
                 fields[oldY][oldX] = null;
-             }
-            else if (absDeltaY == 0 && absDeltaX == starSize
+             } else if (absDeltaY == 0 && absDeltaX == starSize
                      && fields[newY][oldX + deltaX / 2]
                      .color != null) {
                 fields[newY][newX] = fields[oldY][oldX];
                 fields[oldY][oldX] = null;
                 result = isAnotherJumpPossible(oldX, oldY, newX, newY);
-             }
-            else {
+             } else {
                 throw new IncorrectMoveException("Incorrect coordinates");
              }
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException e) {
+            e.printStackTrace();
             throw new IncorrectMoveException("Index is out of bound");
         }
         return result;
@@ -136,8 +131,7 @@ public class ArrayBoard implements Board {
             throws IncorrectPositionException {
         try {
             return fields[y][x] == null ? null : fields[y][x].color;
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException e) {
             throw new IncorrectPositionException("Coordinates out of board");
         }
     }
@@ -158,8 +152,7 @@ public class ArrayBoard implements Board {
                         "The field is not available");
             }
             fields[y][x].color = color;
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException e) {
             throw new IncorrectPositionException(
                     "This field is out of the board");
         }
@@ -182,8 +175,7 @@ public class ArrayBoard implements Board {
                         "No color found at the given position");
             }
             fields[y][x].color = null;
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException e) {
             throw new IncorrectPositionException(
                     "This field is out of the board");
         }
@@ -207,14 +199,16 @@ public class ArrayBoard implements Board {
                 break;
             case NORTHEAST:
                 for (int i = starSize; i < midHeight; i++) {
-                    for (int j = height + 1 + (i - starSize); j < length * 2 - 1 - (i - starSize); j += 2) {
+                    for (int j = height + 1 + (i - starSize);
+                         j < length * 2 - 1 - (i - starSize); j += 2) {
                         fields[i][j].color = color;
                     }
                 }
                 break;
             case NORTHWEST:
                 for (int i = starSize; i < starSize * 2 + 1; i++) {
-                    for (int j = i - starSize; j < midLength + 1 - (i - starSize); j += 2) {
+                    for (int j = i - starSize;
+                         j < midLength + 1 - (i - starSize); j += 2) {
                         fields[i][j].color = color;
                     }
                 }
@@ -229,14 +223,17 @@ public class ArrayBoard implements Board {
                 break;
             case SOUTHEAST:
                 for (int i = midHeight + 1; i < length; i++) {
-                    for (int j = 21 - (i - midHeight - 1); j < 22 + (i - midHeight - 1); j+=2) {
+                    for (int j = height + starSize - (i - midHeight - 1);
+                         j < height + starSize + 1 + (i - midHeight - 1);
+                         j += 2) {
                         fields[i][j].color = color;
                     }
                 }
                 break;
             case SOUTHWEST:
                 for (int i = midHeight + 1; i < length; i++) {
-                    for (int j = 3 - (i - 9) ; j < 4 + (i - 9); j+= 2) {
+                    for (int j = starSize - 1 - (i - length + starSize);
+                         j < starSize + (i - length + starSize); j += 2) {
                         fields[i][j].color = color;
                     }
                 }
@@ -246,36 +243,40 @@ public class ArrayBoard implements Board {
     }
 
     /**
-     * Checks whether all the fields in given corner of the boards are occupied by checkers of chosen color
+     * Checks whether all the fields in given corner of the boards
+     * are occupied by checkers of chosen color.
      * @param seat Side (corner) of the board which is to be to check
      * @param color The color we use for check
-     * @return true iff all the corner's fields are occupied by checkers of chosen color
+     * @return true iff all the corner's fields
+     * are occupied by checkers of chosen color
      */
     @Override
-    public boolean checkCorner(Seat seat, Color color){
+    public boolean checkCorner(final Seat seat, final Color color) {
         switch (seat) {
             case NORTH:
-                for (int i = 0; i < starSize; i++){
-                    for( int j = 0; j <= i * 2; j+=2 ){
-                        if(fields[i][length - 1 - i + j].color != color){
+                for (int i = 0; i < starSize; i++) {
+                    for (int j = 0; j <= i * 2; j += 2) {
+                        if (fields[i][length - 1 - i + j].color != color) {
                             return false;
                         }
                     }
                 }
                 break;
             case NORTHEAST:
-                for (int i = 4; i < 8; i++){
-                    for (int j = 18 + (i - 4); j < 25 - (i - 4); j+= 2){
-                        if(fields[i][j].color != color){
+                for (int i = starSize; i < length - starSize - 1; i++) {
+                    for (int j = height + 1 + (i - starSize);
+                         j < length * 2 - 1 - (i - starSize); j += 2) {
+                        if (fields[i][j].color != color) {
                             return false;
                         }
                     }
                 }
                 break;
             case NORTHWEST:
-                for (int i = 4; i < 8; i++){
-                    for (int j = i - 4; j < 7 - (i - 4); j+= 2){
-                        if(fields[i][j].color != color){
+                for (int i = starSize; i < length - starSize; i++) {
+                    for (int j = i - starSize;
+                         j < starSize * 2 - 1 - (i - starSize); j += 2) {
+                        if (fields[i][j].color != color) {
                             return false;
                         }
                     }
@@ -283,45 +284,52 @@ public class ArrayBoard implements Board {
                 break;
             case SOUTH:
                 for (int i = length; i < height; i++) {
-                    for (int j = midHeight + 1 + (i - length); j < height - 1 - (i - length); j += 2) {
-                        if(fields[i][j].color != color){
+                    for (int j = midHeight + 1 + (i - length);
+                         j < height - 1 - (i - length); j += 2) {
+                        if (fields[i][j].color != color) {
                             return false;
                         }
                     }
                 }
                 break;
             case SOUTHEAST:
-                for (int i = 9; i < 13; i++){
-                    for (int j = 21 - (i - 9); j < 22 + (i - 9); j+= 2){
-                        if(fields[i][j].color != color){
+                for (int i = midHeight + starSize; i < length; i++) {
+                    for (int j = length * 2 - starSize
+                            - 1 - (i - length + starSize);
+                         j < length * 2 - starSize + (i - length + starSize);
+                         j += 2) {
+                        if (fields[i][j].color != color) {
                             return false;
                         }
                     }
                 }
                 break;
             case SOUTHWEST:
-                for (int i = 9; i < 13; i++){
-                    for (int j = 3 - (i - 9) ; j < 4 + (i - 9); j+= 2){
-                        if(fields[i][j].color != color){
+                for (int i = length - starSize; i < length; i++) {
+                    for (int j = starSize - 1 - (i - length + starSize);
+                         j < starSize + (i - length + starSize); j += 2) {
+                        if (fields[i][j].color != color) {
                             return false;
                         }
                     }
                 }
                 break;
+            default:
+                return false;
         }
         return true;
     }
 
     /**
-     * Returns the Array representing the board, where fields are either null
+     * Returns the Array representing the board, where fields are either null.
      * or equal to color representing the checker at the corresponding position
      * @return Array of colors
      */
     @Override
     public Color[][] getCheckerColorArray() {
         Color[][] result = new Color[height][length * 2 - 1];
-        for(int i = 0; i < height; i++){
-            for (int j = 0; j < length * 2 - 1; j++){
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < length * 2 - 1; j++) {
                 result[i][j] = fields[i][j] == null ? null : fields[i][j].color;
             }
         }
@@ -334,51 +342,64 @@ public class ArrayBoard implements Board {
      * the fields corresponds to a board
      */
     private class OptionalColor {
+        /**
+         * Color of the optionalColor.
+         */
         public Color color;
     }
 
     /**
-     * Return the internal representation of the board
-     * @return
+     * Return the internal representation of the board.
+     * @return Array containing inner representation of this board
      */
-    public OptionalColor[][] getFields(){
+    public OptionalColor[][] getFields() {
         return fields;
     }
 
-    private boolean isAnotherJumpPossible(int oldX, int oldY, int currentX, int currentY){
-        if (currentX -4 >= 0 && fields[currentY][currentX - 4] != null &&
-                fields[currentY][currentX - 4].color == null &&
-                fields[currentY][currentX - 2].color != null &&
-                oldX != currentX - 4 && oldY != currentY){
+    private boolean isAnotherJumpPossible(
+            final int oldX, final int oldY, final int currentX,
+            final int currentY) {
+        final int longJump = 4;
+        if (currentX - longJump >= 0
+                && fields[currentY][currentX - longJump] != null
+                && fields[currentY][currentX - longJump].color == null
+                && fields[currentY][currentX - 2].color != null
+                && oldX != currentX - longJump && oldY != currentY) {
             return true;
-        }
-        else if (currentX + 4 <= length * 2 - 1 && fields[currentX + 4][currentY] != null &&
-                fields[currentY][currentX + 4].color == null &&
-                fields[currentY][currentX + 2].color != null &&
-                oldX != currentX + 4 && oldY != currentY){
+        } else if (currentX + longJump < length * 2 - 1
+                && fields[currentY][currentX + longJump] != null
+                && fields[currentY][currentX + longJump].color == null
+                && fields[currentY][currentX + 2].color != null
+                && oldX != currentX + longJump && oldY != currentY) {
             return true;
-        }
-        else if(currentX - 2 >= 0 && currentY - 2 >= 0 && fields[currentY - 2][currentX - 2] != null &&
-                fields[currentY - 2][currentX - 2].color == null && fields[currentY - 1][currentX - 1].color != null &&
-                oldX != currentX - 2 && oldY != currentY - 2){
-                return true;
-        }
-        else if(currentX - 2 >= 0 && currentY + 2 < height && fields[currentY + 2][currentX - 2] != null &&
-                fields[currentY + 2][currentX - 2].color == null && fields[currentY + 1][currentX - 1].color!= null &&
-                oldX != currentX - 2 && oldY != currentY + 2){
+        } else if (currentX - 2 >= 0 && currentY - 2 >= 0
+                && fields[currentY - 2][currentX - 2] != null
+                && fields[currentY - 2][currentX - 2].color == null
+                && fields[currentY - 1][currentX - 1].color != null
+                && oldX != currentX - 2 && oldY != currentY - 2) {
             return true;
-        }
-        else if(currentX + 2 < length * 2 - 1 && currentY - 2 >= 0 && fields[currentY - 2][currentX + 2] != null &&
-                fields[currentY - 2][currentX + 2].color == null && fields[currentY - 1][currentX + 1].color != null &&
-                oldX != currentX + 2 && oldY != currentY - 2){
+        } else if (currentX - 2 >= 0 && currentY + 2 < height
+                && fields[currentY + 2][currentX - 2] != null
+                && fields[currentY + 2][currentX - 2].color == null
+                && fields[currentY + 1][currentX - 1].color != null
+                && oldX != currentX - 2 && oldY != currentY + 2) {
             return true;
-        }
-        else return currentX + 2 < length * 2 - 1 && currentY + 2 < height && fields[currentY + 2][currentX + 2] != null &&
-                    fields[currentY + 2][currentX + 2].color == null && fields[currentY + 1][currentX + 1].color != null &&
-                    oldX != currentX + 2 && oldY != currentY + 2;
-    }
+        } else if (currentX + 2 < length * 2 - 1 && currentY - 2 >= 0
+                && fields[currentY - 2][currentX + 2] != null
+                && fields[currentY - 2][currentX + 2].color == null
+                && fields[currentY - 1][currentX + 1].color != null
+                && oldX != currentX + 2 && oldY != currentY - 2) {
+            return true;
+        } else {
+            return currentX + 2 < length * 2 - 1 && currentY + 2 < height
+                    && fields[currentY + 2][currentX + 2] != null
+                    && fields[currentY + 2][currentX + 2].color == null
+                    && fields[currentY + 1][currentX + 1].color != null
+                    && oldX != currentX + 2 && oldY != currentY + 2;
 
-   /*public static void main(String args[]){
+        }
+    }
+    /*public static void main(String args[]){
         ArrayBoard temp = new ArrayBoard();
         for (Seat seat : Seat.values()
              ) {

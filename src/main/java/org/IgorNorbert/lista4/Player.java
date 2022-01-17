@@ -12,6 +12,7 @@ public class Player implements Runnable {
     private final Socket socket;
     private boolean connected = true;
     private boolean boardReady = false;
+    NetProtocolServer protocol = null;
     public Player( Server parent, Socket socket){
         this.lobbyArray = parent.getLobbyArray();
         this.parent = parent;
@@ -201,7 +202,14 @@ public class Player implements Runnable {
                      int[] temp = (int[])message.getArgument();
                      yield moveChecker(temp[0], temp[1], temp[2], temp[3]);
                  }
-                 case DISCONNECT -> {disconnect(); yield null;}
+                 case DISCONNECT -> {
+                     NetPackage temp = new NetPackage();
+                     temp.type = NetPackage.Type.DISCONNECT;
+                     temp.setArgument("Close correctly");
+                     protocol.sendPackage(temp);
+                     connected = false;
+                     yield null;
+                 }
                  case LOBBIES -> updateLobbyArray();
                  case SKIP -> skipTurn();
                  case CURRENTPLAYER -> currentPlayer();
@@ -216,8 +224,10 @@ public class Player implements Runnable {
              result.setArgument("The int array should be size of 4");
          } catch (ClassCastException e){
              result.setArgument("This command has incorrect parameter");
+         } catch (IOException e) {
+             e.printStackTrace();
          }
-         return result;
+        return result;
     }
     public void fetchBoard(){
         boardReady = true;
@@ -225,7 +235,7 @@ public class Player implements Runnable {
 
     @Override
     public void run() {
-        NetProtocolServer protocol = new SimpleNetProtocolFactory().getServerSide();
+        protocol = new SimpleNetProtocolFactory().getServerSide();
         try {
             protocol.setSocket(socket);
         } catch (IOException e){
@@ -243,18 +253,18 @@ public class Player implements Runnable {
                     if(!connected){break;} // This is stupid, refactor it
                     protocol.sendPackage(temp);
                 }
-                sleep(500);
+              //  sleep(500);
             } catch (IOException e) {
                 if(lobby != null){
                     lobby.removePlayer(this);
                 }
                 return;
-            } catch (InterruptedException e) {
+            } /*catch (InterruptedException e) {
                 connected = false;
                 if(lobby != null){
                     lobby.removePlayer(this);
                 }
-            }
+            }*/
         }
         try{
             protocol.close();

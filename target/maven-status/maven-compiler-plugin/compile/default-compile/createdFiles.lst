@@ -23,5 +23,4 @@ org/IgorNorbert/lista4/MenuBar$Ready.class
 org/IgorNorbert/lista4/Client/NotInLobbyException.class
 org/IgorNorbert/lista4/Client/ServerApi.class
 org/IgorNorbert/lista4/NetPackage.class
-org/IgorNorbert/lista4/StartFailedException.class
 org/IgorNorbert/lista4/Client/NotYourTurnException.class

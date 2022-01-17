@@ -1,7 +1,14 @@
 package org.IgorNorbert.lista4;
 
+/**
+ * Exception indicating forbidden move.
+ */
 public class IncorrectMoveException extends Exception {
-    public IncorrectMoveException(String message) {
+    /**
+     * Constructor.
+     * @param message the message of this exception
+     */
+    public IncorrectMoveException(final String message) {
         super(message);
     }
 }

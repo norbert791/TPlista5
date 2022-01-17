@@ -11,7 +11,7 @@ public interface NetProtocolServer {
     void setSocket(Socket socket) throws IOException;
 
     /**
-     * sends Package
+     * sends Package.
      * @param netPackage package that is to be sent to the server.
      * @throws IOException
      */
@@ -19,6 +19,7 @@ public interface NetProtocolServer {
 
     /**
      * retrieves latest Package.
+     * @return NetPackage sent from the client
      */
     NetPackage retrievePackage();
 

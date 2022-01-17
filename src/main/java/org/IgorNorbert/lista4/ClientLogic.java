@@ -11,6 +11,7 @@ import static java.lang.Thread.sleep;
 //TODO: apply state pattern to make managing NetPackages easier
 public class ClientLogic {
     private Socket socket;
+    NetProtocolClient protocol = null;
     private final Queue<NetPackage> nextCommand = new ConcurrentLinkedQueue<>();
     private volatile boolean inLobby = false;
     private volatile boolean gameStarted = false;
@@ -23,6 +24,7 @@ public class ClientLogic {
     public void connect(String address){
         if(connected){
             userInterface.printError("Already Connected");
+            return;
         }
         try {
             int portNumber = 7777;
@@ -37,7 +39,7 @@ public class ClientLogic {
         @Override
         public void run() {
 
-            final NetProtocolClient protocol = new SimpleNetProtocolFactory().getClientSide();
+            protocol = new SimpleNetProtocolFactory().getClientSide();
             try {
                 protocol.setSocket(socket);
                 connected = true;
@@ -169,6 +171,24 @@ public class ClientLogic {
             return;
         }
         this.connected = false;
+    }
+
+    /**
+     * Private enum class used for managing state of the connection
+     */
+    private enum State{
+        DISCONNECTED,
+        CONNECTED,
+        IN_LOBBY,
+        GAME_ONGOING,
+        GAME_FINISHED;
+
+        /**
+         * Used to send requests for data relevant for the current state of the client.
+         */
+        public void fetch_status(){
+
+        }
     }
     public static void main(String[] args){
         final ClientLogic temp = new ClientLogic();

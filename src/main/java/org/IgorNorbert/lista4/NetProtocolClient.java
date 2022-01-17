@@ -3,6 +3,9 @@ package org.IgorNorbert.lista4;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * Interface for protocol managing communication with server.
+ */
 public interface NetProtocolClient {
     /**
      * sets socket for this session and opens the connection.
@@ -11,13 +14,14 @@ public interface NetProtocolClient {
     void setSocket(Socket socket) throws IOException;
 
     /**
-     * sends Package
+     * sends Package.
      * @param netPackage package that is to be sent to the client.
      */
     void sendPackage(NetPackage netPackage) throws IOException;
 
     /**
      * retrieves latest Package.
+     * @return NetPackage containing response from the server
      */
     NetPackage retrievePackage();
 

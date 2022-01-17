@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Class representing the lobby
+ */
 public class Lobby {
     private volatile GameMaster game;
     private final int maxNumberOfPlayers = 6;

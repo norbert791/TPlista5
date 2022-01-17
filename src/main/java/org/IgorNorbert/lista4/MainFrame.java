@@ -33,22 +33,6 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
         this.setVisible(true);
     }
 
-    /*@Override
-    public void sendInfo() {
-        playerInteger = connector.getPlayerInt();
-        Integer[][] temp = connector.getBoard();
-        if(temp == null){
-            return;
-        }
-        for(int i = 0; i < boardHeight; i++){
-            for (int j = 0; j < boardLength; j++){
-                if(buttonArray[i][j].getBackground() != Color.BLACK){
-                    buttonArray[i][j].setBackground(translateColor(org.IgorNorbert.lista4.Color.toColor(temp[i][j])));
-                }
-            }
-        }
-        repaint();
-    }*/
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() instanceof CheckerButton && currentPlayerColor == playerColor) {
@@ -77,7 +61,7 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
 
     @Override
     public void printBoard(org.IgorNorbert.lista4.Color[][] board) {
-        if (boardPanel != null) {
+        if (board != null && boardPanel != null) {
             for (int i = 0; i < boardHeight; i++) {
                 for (int j = 0; j < boardLength * 2 - 1; j++) {
                     if (buttonArray[i][j].getBackground() != Color.BLACK) {
@@ -87,7 +71,6 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
             }
         }
         repaint();
-   //     System.out.println("Board colored");
     }
     @Override
     public void setCurrentPlayer(org.IgorNorbert.lista4.Color color) {
@@ -114,7 +97,6 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
     private class CheckerButton extends JButton{
         public int x;
         public int y;
-
     }
     private void prepareBoard() {
         boardPanel = new JPanel();
