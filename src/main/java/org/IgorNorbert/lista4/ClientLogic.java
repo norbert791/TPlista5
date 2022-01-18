@@ -1,6 +1,7 @@
 package org.IgorNorbert.lista4;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
@@ -45,7 +46,7 @@ public class ClientLogic {
             }
 
             while (state != State.DISCONNECTED) {
-                System.out.println(state);
+               // System.out.println(state);
                 try{
                     if (protocol.isReady()) {
                         NetPackage temp = protocol.retrievePackage();
@@ -72,7 +73,7 @@ public class ClientLogic {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
+            userInterface.printStartScreen();
         }
     }
 
@@ -93,6 +94,8 @@ public class ClientLogic {
                 case JOIN -> transform(State.IN_LOBBY);
                 case LEAVE -> transform(State.CONNECTED);
                 case LOBBIES -> userInterface.printLobbyList((int[]) result.getArgument());
+                case PlAYERLIST -> userInterface.printPlayers((Map<String, Color>)result.getArgument());
+                case WINORDER -> userInterface.updateVictors((String[]) result.getArgument());
             }
         } catch (ClassCastException e) { //These exceptions shouldn't occur
             e.printStackTrace();
@@ -165,10 +168,14 @@ public class ClientLogic {
     private void fetch_data() throws IOException{
         switch (state) {
             case CONNECTED -> nextCommand.add(new NetPackage(NetPackage.Type.LOBBIES));
-            case IN_LOBBY -> nextCommand.add(new NetPackage(NetPackage.Type.CURRENTPLAYER));
+            case IN_LOBBY -> {
+                nextCommand.add(new NetPackage(NetPackage.Type.CURRENTPLAYER));
+                nextCommand.add(new NetPackage(NetPackage.Type.PlAYERLIST));
+            }
             case IN_GAME -> {
                 nextCommand.add(new NetPackage(NetPackage.Type.CURRENTPLAYER));
                 nextCommand.add(new NetPackage(NetPackage.Type.BOARD));
+                nextCommand.add(new NetPackage(NetPackage.Type.WINORDER));
             }
             case DISCONNECTED -> {}
         }
@@ -179,9 +186,6 @@ public class ClientLogic {
      * @param newState The next state of the client
      */
     private void transform(final State newState) {
-        /**
-         * This fragment manages the methods that should be called after the state has changed
-         */
         switch (this.state) {
             case DISCONNECTED:
             case IN_GAME:
@@ -191,11 +195,20 @@ public class ClientLogic {
                 break;
             case IN_LOBBY:
                 switch (newState) {
-                    case IN_GAME -> nextCommand.add(new NetPackage(NetPackage.Type.PLAYERCOLOR));
+                    case IN_GAME -> {
+                        nextCommand.add(new NetPackage(NetPackage.Type.PLAYERCOLOR));
+                        nextCommand.add(new NetPackage(NetPackage.Type.PlAYERLIST));
+                    }
                     case CONNECTED -> nextCommand.add(new NetPackage(NetPackage.Type.LOBBIES));
                 }
                 break;
-            default:
+            case CONNECTED:
+                if(newState == State.IN_LOBBY) {
+                    userInterface.printLobby();
+                    nextCommand.clear();
+                }
+                break;
+                default:
                 break;
         }
         this.state = newState;

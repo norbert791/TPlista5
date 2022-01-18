@@ -36,16 +36,23 @@ public class PlayerListPanel extends JPanel {
             NameLabel temp = new NameLabel(string);
             players.add(temp);
             this.add(temp);
-            temp = new NameLabel("");
+            temp = new NameLabel("sample text");
+            temp.setOpaque(true);
             temp.setBackground(frame.translateColor(map.get(string)));
+            temp.setForeground(frame.translateColor(map.get(string)));
+            this.add(temp);
         }
     }
 
     public void updateWinOrder(String[] order) {
+        if(order == null) {
+            return;
+        }
         for (int i = 0; i < order.length; i++) {
             for (NameLabel label : players) {
                 if(Objects.equals(label.name, order[i])) {
-                    label.name = label.name + " (" + i + ".)";
+                    label.name = label.name + " (" + (i + 1) + ".)";
+                    label.setText(label.name);
                 }
             }
         }

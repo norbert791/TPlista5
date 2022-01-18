@@ -7,7 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Map;
 
-public class MainFrame extends JFrame implements UserInterface, ActionListener{
+public class MainFrame extends JFrame implements UserInterface, ActionListener {
     private MenuBar menuBar;
     private LayoutManager layout;
     private ClientLogic clientLogic;
@@ -78,6 +78,7 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
         this.boardPanel.updateButtons(board);
         revalidate();
     }
+
     @Override
     public void setCurrentPlayer(org.IgorNorbert.lista4.Color color) {
         this.currentPlayerColor = color;
@@ -117,6 +118,9 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
 
     @Override
     public void printPlayers(Map<String, org.IgorNorbert.lista4.Color> playerMap) {
+        if(playerMap == null){
+            return;
+        }
         if (this.playerListPanel != null) {
             playerListPanel.updatePlayerList(playerMap);
         }
@@ -125,9 +129,39 @@ public class MainFrame extends JFrame implements UserInterface, ActionListener{
 
     @Override
     public void updateVictors(String[] order) {
+        if(order == null){
+            return;
+        }
         if(this.playerListPanel != null) {
             this.playerListPanel.updateWinOrder(order);
         }
+        revalidate();
+    }
+
+    @Override
+    public void printLobby() {
+        if(this.lobbies != null) {
+            this.remove(lobbies);
+        }
+        if(this.gamePanel == null) {
+            this.gamePanel = new JPanel();
+            gamePanel = new JPanel();
+            gamePanel.setLayout(new GridLayout(1,2));
+            boardPanel = new GamePanel(this);
+            playerListPanel = new PlayerListPanel(this);
+            gamePanel.add(boardPanel);
+            gamePanel.add(playerListPanel);
+            this.add(gamePanel);
+        }
+        revalidate();
+    }
+
+    @Override
+    public void printStartScreen() {
+        removeAll();
+        this.add(menuBar);
+        this.gamePanel = null;
+        this.boardPanel = null;
         revalidate();
     }
 

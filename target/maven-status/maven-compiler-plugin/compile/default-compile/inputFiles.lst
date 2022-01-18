@@ -1,15 +1,16 @@
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/NetProtocolClient.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Board.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Client/NotInLobbyException.java
+/home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/PlayerListPanel.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Client/ServerApi.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Client/MenuFrame.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/IncorrectMoveException.java
+/home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/LobbyPanel.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Color.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/SimpleMaster.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/UserInterface.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Client/NotYourTurnException.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Client/ChoseColor.java
-/home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/LobbyScrollPane.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/AllSeatsTakenException.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Client/GameFrame.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Client/Test.java

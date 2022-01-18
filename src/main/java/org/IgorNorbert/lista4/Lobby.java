@@ -31,7 +31,6 @@ public class Lobby {
         }
         playerMap.put(player, null);
         readinessMap.put(player, false);
-        System.out.println("Player joined");
     }
     public synchronized void removePlayer(Player player){
         if(!playerMap.containsKey(player)){
@@ -125,10 +124,8 @@ public class Lobby {
                     game = new SimpleMaster();
                     for (Player temp : playerMap.keySet()) {
                         playerMap.replace(temp, game.addPlayer());
-                        System.out.println("Player ready");
                     }
                     game.startGame();
-                    System.out.println("Game has started");
                 } catch (AllSeatsTakenException | IncorrectNumberOfPlayersException e) {
                     for (Player temp : playerMap.keySet()){
                         playerMap.replace(temp, null);

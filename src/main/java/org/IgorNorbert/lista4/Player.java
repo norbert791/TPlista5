@@ -1,12 +1,14 @@
 package org.IgorNorbert.lista4;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.Socket;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static java.lang.Thread.sleep;
 
 public class Player implements Runnable {
-    private String nickName = "default";
+    private String nickName = "default " + ThreadLocalRandom.current().nextInt(100);
     private Lobby lobby = null;
     private Lobby[] lobbyArray = null;
     private final Server parent;
@@ -55,7 +57,6 @@ public class Player implements Runnable {
             returnInfo.type =NetPackage.Type.ERROR;
             returnInfo.setArgument("You are not in lobby");
         }
-        System.out.println("Player: ready set");
         return returnInfo;
     }
     private NetPackage leave(){
@@ -156,6 +157,28 @@ public class Player implements Runnable {
         }
         return result;
     }
+    private NetPackage winOrder() {
+        Player[] temp = this.lobby.getWinnerLine();
+        if (this.lobby != null && temp != null ) {
+            String[] order = new String[temp.length];
+            for (int i = 0; i < temp.length; i++) {
+                order[i] = temp[i].getNickName();
+            }
+            return new NetPackage(NetPackage.Type.WINORDER, order);
+        }
+        return new NetPackage(NetPackage.Type.WINORDER, null);
+    }
+    private NetPackage playerList() {
+        try {
+            if (lobby != null) {
+                return new NetPackage(NetPackage.Type.PlAYERLIST, (Serializable) lobby.getMap());
+            }
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+
+        }
+        return new NetPackage(NetPackage.Type.PlAYERLIST, null);
+    }
     private NetPackage currentPlayer(){
         NetPackage result;
         if (lobby == null) {
@@ -202,6 +225,8 @@ public class Player implements Runnable {
                  case LOBBIES -> updateLobbyArray();
                  case SKIP -> skipTurn();
                  case CURRENTPLAYER -> currentPlayer();
+                 case WINORDER -> winOrder();
+                 case PlAYERLIST -> playerList();
                  case ERROR, CONNECT, RETURN -> {
                      NetPackage temp = new NetPackage();
                      temp.type = NetPackage.Type.ERROR;

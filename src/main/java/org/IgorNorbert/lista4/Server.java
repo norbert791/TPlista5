@@ -39,7 +39,7 @@ public class Server {
             throw new IllegalArgumentException("numberOfLobbies has to be greater than 0, given: " + numberOfLobbies);
         }
         else {
-            for (int i = 0; i < numberOfLobbies; i++){
+            for (int i = 0; i < numberOfLobbies; i++) {
                 lobbyList.add(new Lobby());
             }
         }

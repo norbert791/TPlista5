@@ -53,4 +53,14 @@ public interface UserInterface {
      * @param order order in which the players have one
      */
     void updateVictors(String[] order);
+
+    /**
+     * Prints lobby screen
+     */
+    void printLobby();
+
+    /**
+     * Prints initial screen();
+     */
+    void printStartScreen();
 }
