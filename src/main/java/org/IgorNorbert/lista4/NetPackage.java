@@ -23,7 +23,9 @@ public class NetPackage implements Serializable {
         LOBBIES,
         FORFEIT,
         SKIP,
-        CURRENTPLAYER;
+        CURRENTPLAYER,
+        PlAYERLIST,
+        WINORDER;
     }
 
     /**

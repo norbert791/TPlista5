@@ -6,12 +6,12 @@ import java.net.Socket;
 import static java.lang.Thread.sleep;
 
 public class Player implements Runnable {
+    private String nickName = "default";
     private Lobby lobby = null;
     private Lobby[] lobbyArray = null;
     private final Server parent;
     private final Socket socket;
     private boolean connected = true;
-    private boolean boardReady = false;
     NetProtocolServer protocol = null;
     public Player( Server parent, Socket socket){
         this.lobbyArray = parent.getLobbyArray();
@@ -94,7 +94,7 @@ public class Player implements Runnable {
         }
         return result;
     }
-    private NetPackage getPlayerArray() {
+    private NetPackage getColorArray() {
         NetPackage result;
         if(lobby != null){
             result = new NetPackage();
@@ -105,20 +105,6 @@ public class Player implements Runnable {
             result = new NetPackage();
             result.type =NetPackage.Type.ERROR;
             result.setArgument("You are not in a lobby");
-        }
-        return result;
-    }
-    private NetPackage getColorArray(){
-        NetPackage result;
-        if(lobby != null){
-            result = new NetPackage();
-            result.type = NetPackage.Type.BOARD;
-            result.setArgument(lobby.getColorArray());
-        }
-        else{
-            result = new NetPackage();
-            result.type =NetPackage.Type.ERROR;
-            result.setArgument("Your are not in a lobby");
         }
         return result;
     }
@@ -140,7 +126,11 @@ public class Player implements Runnable {
         lobbyArray = parent == null ? null : parent.getLobbyArray();
         NetPackage result = new NetPackage();
         result.type = NetPackage.Type.LOBBIES;
-        result.setArgument(lobbyArray == null ? null : lobbyArray.length);
+        int[] arg = new int[lobbyArray.length];
+        for (int i = 0; i < arg.length; i++) {
+            arg[i] = lobbyArray[i].getPlayerArray().length;
+        }
+        result.setArgument(arg);
         return result;
     }
     private NetPackage skipTurn(){
@@ -196,7 +186,7 @@ public class Player implements Runnable {
                  case PLAYERCOLOR -> getPlayerColor();
                  case READY -> setReady((boolean) message.getArgument());
                  case LEAVE, FORFEIT -> leave();
-                 case BOARD -> getPlayerArray();
+                 case BOARD -> getColorArray();
                  case MOVE -> {
                      int[] temp = (int[])message.getArgument();
                      yield moveChecker(temp[0], temp[1], temp[2], temp[3]);
@@ -228,9 +218,6 @@ public class Player implements Runnable {
          }
         return result;
     }
-    public void fetchBoard(){
-        boardReady = true;
-     }
 
     @Override
     public void run() {
@@ -270,5 +257,8 @@ public class Player implements Runnable {
         } catch (IOException e){
             e.printStackTrace();
         }
+    }
+    public String getNickName() {
+        return this.nickName;
     }
 }

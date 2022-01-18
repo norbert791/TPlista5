@@ -15,9 +15,6 @@ public class MenuBar extends JMenuBar implements ActionListener {
         JMenuItem tempItem = new Connect();
         tempItem.addActionListener(this);
         temp.add(tempItem);
-        tempItem = new Enter();
-        tempItem.addActionListener(this);
-        temp.add(tempItem);
         tempItem = new Disconnect();
         tempItem.addActionListener(this);
         temp.add(tempItem);
@@ -51,6 +48,7 @@ public class MenuBar extends JMenuBar implements ActionListener {
         currentColor.setOpaque(true);
         this.add(currentColor);
     }
+    //TODO: Make it enum
     private class Join extends JMenu{
         Join(){
             super("Join");
@@ -69,11 +67,6 @@ public class MenuBar extends JMenuBar implements ActionListener {
     private class Disconnect extends JMenuItem{
         Disconnect(){
             super("Disconnect");
-        }
-    }
-    private class Enter extends JMenuItem{
-        Enter(){
-            super("Enter lobby");
         }
     }
     private class Leave extends JMenuItem{
@@ -108,18 +101,6 @@ public class MenuBar extends JMenuBar implements ActionListener {
             );
             if(address != null && !address.equals("")) {
                 frame.connect(address);
-            }
-        }
-        else if(e.getSource() instanceof Enter) {
-            String room = JOptionPane.showInputDialog(
-                    frame,
-                    "Insert room number"
-                    );
-            try {
-                int result = Integer.parseInt(room);
-                frame.join(result);
-            }catch (NumberFormatException ex){
-                ex.printStackTrace();
             }
         }
         else if(e.getSource() instanceof Leave ) {

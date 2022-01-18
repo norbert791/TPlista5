@@ -71,7 +71,7 @@ public class Lobby {
     }
     public Player[] getWinnerLine(){
         return winnersLine.toArray(new Player[0]);
-    }
+    } //TODO Consider removing it
     public synchronized Color getPlayerColor(Player player){
         return playerMap.get(player);
     }
@@ -95,7 +95,6 @@ public class Lobby {
         boolean result = game.moveChecker(oldX, oldY, newX, newY, playerMap.get(player));
         updatePlayerLine();
         updateGameStatus();
-        notifyPlayers();
         return result;
     }
     public synchronized void skipTurn(Player player) throws NotThisLobbyException, NotThisPlayerTurnException {
@@ -110,16 +109,7 @@ public class Lobby {
         if(game == null) {
             return null;
         }
-  //      System.out.println("retrieving board from gameMaster");
         Color[][] result = game.getCheckerArray();
-        /*final Color[][] colorArray = game.getCheckerArray();
-        Integer[][] result = new Integer[colorArray.length][];
-        for(int i = 0; i < colorArray.length; i++){
-            result[i] = new Integer[colorArray[i].length];
-            for(int j = 0; j < colorArray[i].length; j++){
-                result[i][j] = Color.toInteger (colorArray[i][j]);
-            }
-        }*/
         return result;
     }
     public Color[][] getColorArray(){
@@ -138,7 +128,6 @@ public class Lobby {
                         System.out.println("Player ready");
                     }
                     game.startGame();
-                    notifyPlayers();
                     System.out.println("Game has started");
                 } catch (AllSeatsTakenException | IncorrectNumberOfPlayersException e) {
                     for (Player temp : playerMap.keySet()){
@@ -152,9 +141,19 @@ public class Lobby {
             }
         }
     }
-    private void notifyPlayers(){
-        for (Player temp : playerMap.keySet()){
-            temp.fetchBoard();
+
+    public String[] getPlayerArray() {
+        ArrayList<String> temp = new ArrayList<>();
+        for ( Player player : playerMap.keySet()) {
+            temp.add(player.getNickName());
         }
+        return temp.toArray(new String[0]);
+    }
+    public Map<String, Color> getMap() {
+        Map<String, Color> result = new HashMap<>();
+        for (Player temp : playerMap.keySet()) {
+            result.put(temp.getNickName(), playerMap.get(temp));
+        }
+        return result;
     }
 }

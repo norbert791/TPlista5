@@ -1,5 +1,4 @@
 package org.IgorNorbert.lista4;
-//TODO:
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Queue;
@@ -8,7 +7,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static java.lang.Thread.sleep;
-//TODO: apply state pattern to make managing NetPackages easier
 public class ClientLogic {
     private Socket socket;
     NetProtocolClient protocol = null;
@@ -94,6 +92,7 @@ public class ClientLogic {
                 case PLAYERCOLOR -> userInterface.setPlayerColor((Color) result.getArgument());
                 case JOIN -> transform(State.IN_LOBBY);
                 case LEAVE -> transform(State.CONNECTED);
+                case LOBBIES -> userInterface.printLobbyList((int[]) result.getArgument());
             }
         } catch (ClassCastException e) { //These exceptions shouldn't occur
             e.printStackTrace();

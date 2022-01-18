@@ -28,7 +28,7 @@ public class Server {
         while(running) {
            Socket connection = socket.accept();
            if(playersList.size() < maxNumberOfConnections){
-               Player temp = new Player( this, connection);
+               Player temp = new Player(this, connection);
                pool.execute(temp);
                System.out.println("User connected");
            }

@@ -9,6 +9,7 @@
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/UserInterface.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Client/NotYourTurnException.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Client/ChoseColor.java
+/home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/LobbyScrollPane.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/AllSeatsTakenException.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Client/GameFrame.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Client/Test.java
@@ -16,6 +17,7 @@
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Player.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/ArrayBoard.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Seat.java
+/home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/GamePanel.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/NetProtocolServer.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/Lobby.java
 /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/src/main/java/org/IgorNorbert/lista4/NotThisLobbyException.java

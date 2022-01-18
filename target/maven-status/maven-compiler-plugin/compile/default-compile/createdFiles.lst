@@ -1,4 +1,5 @@
 org/IgorNorbert/lista4/SimpleMaster.class
+org/IgorNorbert/lista4/PlayerListPanel$NameLabel.class
 org/IgorNorbert/lista4/Board.class
 org/IgorNorbert/lista4/Color.class
 org/IgorNorbert/lista4/ClientLogic$State.class
@@ -22,6 +23,7 @@ org/IgorNorbert/lista4/ArrayBoard$OptionalColor.class
 org/IgorNorbert/lista4/Seat.class
 org/IgorNorbert/lista4/MenuBar$Ready.class
 org/IgorNorbert/lista4/Client/NotInLobbyException.class
+org/IgorNorbert/lista4/PlayerListPanel.class
 org/IgorNorbert/lista4/Client/ServerApi.class
 org/IgorNorbert/lista4/NetPackage.class
 org/IgorNorbert/lista4/Client/NotYourTurnException.class

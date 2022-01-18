@@ -1,16 +1,27 @@
 package org.IgorNorbert.lista4;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class LobbyScrollPane extends JScrollPane implements ActionListener {
+public class LobbyPanel extends JPanel implements ActionListener {
     private final MainFrame frame;
     private final Collection<LobbyButton> buttons = new ArrayList<>();
-    public LobbyScrollPane (MainFrame frame) {
+    public LobbyPanel(MainFrame frame, int[] numbers) {
+        super();
         this.frame = frame;
+        this.setLayout(new GridLayout(numbers.length,1));
+        for (int i = 0; i < numbers.length; i++) {
+            LobbyButton temp = new LobbyButton(i, numbers[i]);
+            temp.addActionListener(this);
+            buttons.add(temp);
+            this.add(temp);
+        }
     }
 
     @Override
@@ -25,18 +36,15 @@ public class LobbyScrollPane extends JScrollPane implements ActionListener {
         public int lobbyNumber;
         public int numberOfPlayers;
         public LobbyButton(int lobbyNumber, int numberOfPlayers) {
-            super("Lobby no. " + lobbyNumber + "(" +  numberOfPlayers + "/6)");
+            super("Lobby no. " + lobbyNumber + " (" +  numberOfPlayers + "/6)");
             this.lobbyNumber = lobbyNumber;
             this.numberOfPlayers = numberOfPlayers;
         }
     }
-    public void updateList(int[] lobbies) {
-        for (LobbyButton button : buttons) {
-            this.remove(button);
-        }
-        buttons.clear();
-        for (int i = 0; i < lobbies.length; i++) {
-            LobbyButton temp = new LobbyButton(i, lobbies[i]);
+    public void setPanel(int[] numbers) {
+        for (int i = 0; i < numbers.length; i++) {
+            LobbyButton temp = new LobbyButton(i, numbers[i]);
+            temp.addActionListener(this);
             buttons.add(temp);
             this.add(temp);
         }

@@ -1,5 +1,7 @@
 package org.IgorNorbert.lista4;
 
+import java.util.Map;
+
 /**
  * Interface used for managing UI.
  */
@@ -39,4 +41,16 @@ public interface UserInterface {
      * @param lobbies Array of lobbies where index is lobby number and value is number of players in lobby.
      */
     void printLobbyList(int[] lobbies);
+
+    /**
+     * Prints player's names and their colors
+     * @param playerMap map containing list of players and their names
+     */
+    void printPlayers(Map<String, Color> playerMap);
+
+    /**
+     * Updates on-screen info about victors;
+     * @param order order in which the players have one
+     */
+    void updateVictors(String[] order);
 }
