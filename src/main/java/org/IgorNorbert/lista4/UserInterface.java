@@ -63,4 +63,9 @@ public interface UserInterface {
      * Prints initial screen();
      */
     void printStartScreen();
+
+    /**
+     * Sets UI's board mask.
+     */
+    public void setMask(boolean[][] boardMask);
 }

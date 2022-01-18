@@ -101,34 +101,34 @@ public class PlayerTest {
         }
     }
     @Test
-    void testGetPlayerArrayAndInt(){
+    void testGetPlayerArray(){
         final Lobby lobby = new Lobby();
         final Player player1 = new Player();
         final Player player2 = new Player();
         Field field;
         Method ready;
         Method getBoard;
-        Method getInt;
+        Method getColor;
         try {
             field = Player.class.getDeclaredField("lobby");
             ready = Player.class.getDeclaredMethod("setReady", boolean.class);
-           // getBoard = Player.class.getDeclaredMethod("getPlayerArray");
-            getInt = Player.class.getDeclaredMethod("getPlayerColor");
+            getBoard = Player.class.getDeclaredMethod("getColorArray");
+            getColor = Player.class.getDeclaredMethod("getPlayerColor");
             field.setAccessible(true);
             ready.setAccessible(true);
-       //     getBoard.setAccessible(true);
-            getInt.setAccessible(true);
+            getBoard.setAccessible(true);
+            getColor.setAccessible(true);
             field.set(player1, lobby);
             field.set(player2, lobby);
             lobby.addPlayer(player1);
             lobby.addPlayer(player2);
             ready.invoke(player1, true);
             ready.invoke(player2, true);
-     //       NetPackage temp = (NetPackage) getBoard.invoke(player1);
-    //        assertEquals(temp.getArgument().getClass(), Color[][].class);
-     //       Color[][] temp2 = (Color [][]) temp.getArgument();
-      //      assertNotNull(temp2[0][12]);
-            assertNotNull(((Color) ((NetPackage) getInt.invoke(player1)).getArgument()));
+            NetPackage temp = (NetPackage) getBoard.invoke(player1);
+            assertEquals(temp.getArgument().getClass(), Color[][].class);
+            Color[][] temp2 = (Color [][]) temp.getArgument();
+            assertNotNull(temp2[0][12]);
+            assertNotNull(((Color) ((NetPackage) getColor.invoke(player1)).getArgument()));
         } catch (NoSuchFieldException | NoSuchMethodException |
                 IllegalAccessException | LobbyFullException |
                 NotThisLobbyException | InvocationTargetException e) {

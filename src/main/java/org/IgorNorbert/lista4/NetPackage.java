@@ -17,7 +17,7 @@ public class NetPackage implements Serializable {
         READY,
         BOARD,
         PLAYERCOLOR,
-        RETURN,
+        BOARDMASK,
         ERROR,
         DISCONNECT,
         LOBBIES,

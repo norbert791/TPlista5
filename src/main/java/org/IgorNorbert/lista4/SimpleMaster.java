@@ -276,6 +276,11 @@ public class SimpleMaster implements GameMaster {
         return board.getCheckerColorArray();
     }
 
+    @Override
+    public boolean[][] boardMask() {
+        return this.board.getMask();
+    }
+
     /**
      * Private method specific to this implementation.
      * It forces players into fixed positions on board

@@ -91,4 +91,10 @@ public interface GameMaster {
      * @return array of Colors, where each color corresponds to player's color
      */
     Color[][] getCheckerArray();
+
+    /**
+     * Returns array of boolean representing the board's size and shape
+     * @return a field is false iff it's permanently off limits
+     */
+    boolean[][] boardMask();
 }

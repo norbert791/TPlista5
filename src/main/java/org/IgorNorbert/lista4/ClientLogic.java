@@ -9,22 +9,49 @@ import java.util.concurrent.Executors;
 
 import static java.lang.Thread.sleep;
 public class ClientLogic {
+    /**
+     * Socket used for exchanging data with server.
+     */
     private Socket socket;
-    NetProtocolClient protocol = null;
+    /**
+     * Interface used for communication with server.
+     */
+    private NetProtocolClient protocol = null;
+    /**
+     * field describing current state of the client.
+     */
     private State state = State.DISCONNECTED;
+    /**
+     * Queue interface used for storing commands,
+     * this way any user action will reach the server
+     * unless the Queue is emptied explicitly.
+     */
     private final Queue<NetPackage> nextCommand = new ConcurrentLinkedQueue<>();
+    /**
+     * Executor service used for managing client threads.
+     */
     private final ExecutorService pool = Executors.newFixedThreadPool(2);
+    /**
+     * User interface. Used for sending information to user.
+     */
     private final UserInterface userInterface;
-    public ClientLogic(){
+    /**
+     * Default constructor.
+     */
+    public ClientLogic() {
         this.userInterface = new MainFrame(this);
     }
-    public void connect(String address){
-        if(state != State.DISCONNECTED){
+    /**
+     * Connects to server at address.
+     * @param address of server the client should connect to
+     */
+    public void connect(final String address) {
+        if (state != State.DISCONNECTED) {
             userInterface.printError("Already Connected");
             return;
         }
         try {
-            int portNumber = 7777;
+            final int portNumber = 7777;
             socket = new Socket(address, portNumber);
             pool.execute(new ConnectionThread());
         } catch (IOException e) {
@@ -32,32 +59,37 @@ public class ClientLogic {
             socket = null;
         }
     }
+
+    /**
+     * private class used for sending requests and processing replies.
+     */
     private class ConnectionThread implements Runnable {
         @Override
         public void run() {
-
+            //Creating client-side implementation of protocol
             protocol = new SimpleNetProtocolFactory().getClientSide();
             try {
                 protocol.setSocket(socket);
                 transform(State.CONNECTED);
-            } catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
                 return;
             }
-
+            //While client is connected process replies and send requests
             while (state != State.DISCONNECTED) {
-               // System.out.println(state);
-                try{
+                try {
                     if (protocol.isReady()) {
                         NetPackage temp = protocol.retrievePackage();
                         decodePackage(temp);
                     }
                     if (!nextCommand.isEmpty()) {
                         protocol.sendPackage(nextCommand.remove());
+                    } else {
+                        fetchData();
                     }
-                    else {
-                        fetch_data();
-                    }
+                    //Used to regulate intervals at which
+                    // client will send request for server state
+                    //TODO this may cause some bottle-neck. Better refactor it.
                     sleep(500);
                 } catch (IOException | InterruptedException e) {
                     e.printStackTrace();
@@ -65,7 +97,7 @@ public class ClientLogic {
                     userInterface.printError("Connection error occurred");
                 }
             }
-
+            //Send info to server that we are leaving & close connection
             NetPackage temp = new NetPackage(NetPackage.Type.DISCONNECT);
             try {
                 protocol.sendPackage(temp);
@@ -77,32 +109,55 @@ public class ClientLogic {
         }
     }
 
-    private synchronized void decodePackage(NetPackage result){
+    /**
+     * Private method used for responding to reply from server.
+     * @param result NetPackage containing feed back from server
+     */
+    private synchronized void decodePackage(final NetPackage result) {
         try {
             switch (result.type) {
                 case ERROR ->
                     userInterface.printError((String) result.getArgument());
                 case CURRENTPLAYER -> {
-                    if(result.getArgument() != null){
+                    if (result.getArgument() != null) {
                         transform(State.IN_GAME);
-                        userInterface.setCurrentPlayer((Color) result.getArgument());
+                        userInterface.setCurrentPlayer(
+                                (Color) result.getArgument());
                     }
                 }
-                case MOVE -> userInterface.nextMove((boolean) result.getArgument());
-                case BOARD -> userInterface.printBoard((Color[][]) result.getArgument());
-                case PLAYERCOLOR -> userInterface.setPlayerColor((Color) result.getArgument());
+                case MOVE -> userInterface.nextMove(
+                        (boolean) result.getArgument());
+                case BOARD -> userInterface.printBoard(
+                        (Color[][]) result.getArgument());
+                case PLAYERCOLOR -> userInterface.setPlayerColor(
+                        (Color) result.getArgument());
                 case JOIN -> transform(State.IN_LOBBY);
                 case LEAVE -> transform(State.CONNECTED);
-                case LOBBIES -> userInterface.printLobbyList((int[]) result.getArgument());
-                case PlAYERLIST -> userInterface.printPlayers((Map<String, Color>)result.getArgument());
-                case WINORDER -> userInterface.updateVictors((String[]) result.getArgument());
+                case LOBBIES -> userInterface.printLobbyList(
+                        (int[]) result.getArgument());
+                case PlAYERLIST -> userInterface.printPlayers(
+                        (Map<String, Color>) result.getArgument());
+                case WINORDER -> userInterface.updateVictors(
+                        (String[]) result.getArgument());
+                case BOARDMASK -> {
+                    userInterface.setMask((boolean[][]) result.getArgument());
+                    userInterface.printLobby();
+                }
             }
         } catch (ClassCastException e) { //These exceptions shouldn't occur
             e.printStackTrace();
         }
     }
 
-    public void moveChecker(int oldX, int oldY, int newX, int newY){
+    /**
+     * Send request to move checker from old to new position.
+     * @param oldX old x coordinate
+     * @param oldY old y coordinate
+     * @param newX old x coordinate
+     * @param newY old y coordinate
+     */
+    public void moveChecker(
+            final int oldX, final int oldY, final int newX, final int newY) {
         if (state != State.IN_GAME) {
             return;
         }
@@ -111,7 +166,15 @@ public class ClientLogic {
         temp.setArgument(new int[]{oldX, oldY, newX, newY});
         nextCommand.add(temp);
     }
-    public void setReady(boolean value){
+
+    /**
+     * Notifies server that client is ready to play.
+     * @param value true iff player is ready
+     */
+    public void setReady(final boolean value) {
+        //Can be sent only if player is in lobby
+        // (otherwise server should ignore it or return ERROR
+        // so it is pointless to send it in the first place)
         if (state != State.IN_LOBBY) {
             return;
         }
@@ -119,9 +182,12 @@ public class ClientLogic {
         temp.type = NetPackage.Type.READY;
         temp.setArgument(value);
         nextCommand.add(temp);
-       // System.out.println("Client queued ready");
     }
-    public void leave(){
+
+    /**
+     * Send Leave request.
+     */
+    public void leave() {
         if (state != State.IN_GAME) {
             return;
         }
@@ -129,7 +195,12 @@ public class ClientLogic {
         nextCommand.add(new NetPackage(NetPackage.Type.LEAVE));
         transform(State.CONNECTED);
     }
-    public void join(int number) {
+
+    /**
+     * Joins to lobby whose id is equal to number.
+     * @param number id of lobby the client should connect to
+     */
+    public void join(final int number) {
         if (state != State.CONNECTED) {
             return;
         }
@@ -138,7 +209,11 @@ public class ClientLogic {
         temp.setArgument(number);
         nextCommand.add(temp);
     }
-    public void skip(){
+
+    /**
+     * Sends requests to server that player wants to skip their turn.
+     */
+    public void skip() {
         if (state != State.IN_GAME) {
             return;
         }
@@ -146,28 +221,47 @@ public class ClientLogic {
         temp.type = NetPackage.Type.SKIP;
         nextCommand.add(temp);
     }
+
+    /**
+     * Sends requests to server that players
+     * wants to safely disconnect.
+     */
     public void disconnect() {
-        if (state != State.DISCONNECTED) {
+        if (state == State.DISCONNECTED) {
             return;
         }
         transform(State.DISCONNECTED);
     }
 
     /**
-     * Private enum class used for managing state of the connection
+     * Private enum class used for managing state of the connection.
      */
     private enum State {
+        /**
+         * Client is disconnected.
+         */
         DISCONNECTED,
+        /**
+         * Client is connected.
+         */
         CONNECTED,
+        /**
+         * Client is in lobby.
+         */
         IN_LOBBY,
+        /**
+         * Client is in ongoing game.
+         */
         IN_GAME,
     }
     /**
-     * Used to send continual requests for data relevant for the current state of the client.
+     * Used to send continual requests for data
+     * relevant for the current state of the client.
      */
-    private void fetch_data() throws IOException{
+    private void fetchData() throws IOException {
         switch (state) {
-            case CONNECTED -> nextCommand.add(new NetPackage(NetPackage.Type.LOBBIES));
+            case CONNECTED -> nextCommand.add(
+                    new NetPackage(NetPackage.Type.LOBBIES));
             case IN_LOBBY -> {
                 nextCommand.add(new NetPackage(NetPackage.Type.CURRENTPLAYER));
                 nextCommand.add(new NetPackage(NetPackage.Type.PlAYERLIST));
@@ -177,7 +271,7 @@ public class ClientLogic {
                 nextCommand.add(new NetPackage(NetPackage.Type.BOARD));
                 nextCommand.add(new NetPackage(NetPackage.Type.WINORDER));
             }
-            case DISCONNECTED -> {}
+            default -> { }
         }
     }
     /**
@@ -196,16 +290,19 @@ public class ClientLogic {
             case IN_LOBBY:
                 switch (newState) {
                     case IN_GAME -> {
-                        nextCommand.add(new NetPackage(NetPackage.Type.PLAYERCOLOR));
-                        nextCommand.add(new NetPackage(NetPackage.Type.PlAYERLIST));
+                        nextCommand.add(new NetPackage(
+                                NetPackage.Type.PLAYERCOLOR));
+                        nextCommand.add(new NetPackage(
+                                NetPackage.Type.PlAYERLIST));
                     }
-                    case CONNECTED -> nextCommand.add(new NetPackage(NetPackage.Type.LOBBIES));
+                    case CONNECTED -> nextCommand.add(
+                            new NetPackage(NetPackage.Type.LOBBIES));
                 }
                 break;
             case CONNECTED:
-                if(newState == State.IN_LOBBY) {
-                    userInterface.printLobby();
+                if (newState == State.IN_LOBBY) {
                     nextCommand.clear();
+                    nextCommand.add(new NetPackage(NetPackage.Type.BOARDMASK));
                 }
                 break;
                 default:
@@ -213,7 +310,12 @@ public class ClientLogic {
         }
         this.state = newState;
     }
-    public static void main(String[] args){
+
+    /**
+     * Initializes client.
+     * @param args do nothing
+     */
+    public static void main(final String[] args) {
         final ClientLogic temp = new ClientLogic();
     }
 }

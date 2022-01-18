@@ -75,4 +75,10 @@ public interface Board {
      * and null fields where there are no checkers or the field is illegal.
      */
     Color[][] getCheckerColorArray();
+
+    /**
+     * Return boolean array with (permanently) illegal fields marked as 0 and other as 1
+     * @return boolean array representing board's size and shape
+     */
+    boolean[][] getMask();
 }

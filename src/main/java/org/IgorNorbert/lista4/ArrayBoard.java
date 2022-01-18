@@ -336,6 +336,17 @@ public class ArrayBoard implements Board {
         return result;
     }
 
+    @Override
+    public boolean[][] getMask() {
+        boolean[][] result = new boolean[height][length * 2 - 1];
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < length * 2 - 1; j++) {
+                result[i][j] = fields[i][j] != null;
+            }
+        }
+        return result;
+    }
+
     /**
      * Class representing the board's fields.
      * Null if the field is off-limits, non-null if
@@ -399,27 +410,4 @@ public class ArrayBoard implements Board {
 
         }
     }
-    /*public static void main(String args[]){
-        ArrayBoard temp = new ArrayBoard();
-        for (Seat seat : Seat.values()
-             ) {
-            temp.setCorner(seat, Color.CYAN);
-        }
-        for (OptionalColor[] array : temp.getFields()
-             ) {
-            for (OptionalColor field : array
-                 ) {
-                if (field == null){
-                    System.out.print("#");
-                }
-                else if (field.color != null){
-                    System.out.print("*");
-                }
-                else{
-                    System.out.print("o");
-                }
-            }
-            System.out.print("\n");
-        }
-    }*/
 }

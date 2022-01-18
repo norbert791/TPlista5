@@ -82,7 +82,6 @@ public class SimpleNetProtocolServer implements NetProtocolServer {
             try {
                 packageCache = (NetPackage) inputStream.readObject();
                 result = true;
-     //           System.out.println("Refreshing package");
             } catch (ClassNotFoundException | ClassCastException e) {
                 e.printStackTrace();
             }

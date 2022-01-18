@@ -1,20 +1,9 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-note "This interface allows interacting with the board. \n The implementation should check if the move is possible, \n but doesn't need to check neither who's made the move nor the win conditions" as BoardNote
-note "This interface allows to interact with the game itself. \n It should check win cons and move correctness" as GMnote
-note "Used for player distinction. \n The values' names may be considered symbolic" as ClNote
-note "Used for seat distinction" as Snote
-
-GMnote .. GameMaster
-BoardNote .. Board
-ClNote .. Color
-Snote .. Seat
-
 interface ServerApi
 interface Board
 interface Runnable
-class Checker
 class Server
 class ArrayBoard
 class SimpleMaster
@@ -23,7 +12,6 @@ class Lobby
 enum Color
 enum Seat
 
-Server ..|> ServerApi : implements
 Color "1" --* "*" ArrayBoard
 ArrayBoard ..|> Board : implements
 Lobby ..> GameMaster : uses
@@ -31,29 +19,67 @@ SimpleMaster ..|> GameMaster : implements
 SimpleMaster ..> Board : uses
 Seat --o SimpleMaster : uses
 Lobby "*" --* "1" Server
-Player "0..6" --o Lobby
+Player "0..6" -- "1" Lobby
 Player "*" --o Server
 Player ..|> Runnable : implements
+OptionalField --+ ArrayBoard
+Type --+ NetPackage
+NetPackage ..> Player : uses
+ProtocolServer ..> Player : uses
+SimpleProtocolServer ..|> ProtocolServer : implemens
 
-class Checker{
-   + color : enum
+class OptionalField {
+    +color : Color
+}
+
+class NetPackage {
+    type : Type
+    argument : Serializable
+}
+
+class SimpleProtocolServer{
+    -socket : Socket
+    -inputStream : ObjectInputStream
+    -outputStream : ObjectOutputStream
+    -packageCache : NetPackage
 }
 
 class Player{
     -isReady : boolean
+    -socket : Socket
+    -connected : boolean
+    -protocol : ProtocolServer
+    -lobbyArray : Lobby[]
+    -lobby : Lobby
     -name : String
-    -InterpretCommand() : void
+    -InterpretCommand(package : NetPackage) : void
     -moveChecker(oldX : int, oldY : int, newX : int, newY : int)  : void
     -setReady(isReady : boolean) : void
     -leave() : void
     -joinLobby(int number) : void
     -sendBoard() : void
     -CheckColor() : void
+    -parseCommand(package : NetPackage) : NetPackage
+    +Player(parent : Server, socket : Server)
+    +Player()
     +getName() : String
     +getReady() : boolean
 }
 class ArrayBoard{
-    -colorList : Array<Array<Color>>
+    -colorList : OptionalColor[][]
+    -height : int
+    -length :  int
+    -midHeight : int
+    -midLength : int
+    -starSize : int
+    -isAnotherJumpPossible() : boolean
+}
+
+interface ProtocolServer{
+    +retrievePackage() : NetPackage
+    +waitForPackage(): NetPackage
+    +setSocket() : void
+    +sendPackage(package : NetPackage)) : void
 }
 
 interface Board{
@@ -62,6 +88,10 @@ interface Board{
     +addChecker(X : int, Y : int, color : Color) : void
     +removeChecker(X : int, Y : int) : void
     +getCheckerColorArray() :  Array<Array<Color>>
+    +clear() : void
+    +getMask() : boolean[][]
+    +setCorner() : void
+    +checkCorner() : void
 }
 
 interface GameMaster{
@@ -75,31 +105,58 @@ interface GameMaster{
    __Game methods__
    + moveChecker(oldX : int, oldY : int, newX : int, newY : int, color : Color) : boolean
    + getCheckerArray() : Array<Array<Color>>
+   + getWinner() : Color[]
+   + getCurrentPlayer() : Color
+   + skipTurn() : void
+   + forfeit() : void
+   + getCheckerArray : Color[]][]
+   + boardMast() : boolean[][]
 }
-'For further consideration
-interface ServerApi{
-    kickPlayer(String name) : void
-    showPlayers(String name) : Array<String>
-    showPlayerCount() : int
-}
+
 class SimpleMaster{
     -board : Board
     -colorList : map<Seat,Color>
-    -checkWinConditions(color : Color)r) : boolean
+    -checkWinConditions(color : Color) : boolean
+    -isFinished : boolean
+    -order : Color[]
+    -currentPlayer : Color
+    -winOrder : Collection<Color>
+    -turn : int
+    -generateOrder() : Color[]
+    -fixPositions() : void
 }
 class Lobby{
-    -game : GameMaster
-    -colorMap : map<Player,Color>
-    +removePlayer() : void
-    +addPlayer() : void
-    +getCurrentPlayerNumber() : Integer
-    +getCheckerArray() : Array<Array<Integer>>
-    +moveChecker(oldX : int, oldY: int, newX: int, newY : int, player : Player)
+    - mask : boolean[][]
+    - readinessMap : Map<Player,boolean>
+    - forfeitLine : List<Player>
+    - winnersLine : List<Player>
+    - game : GameMaster
+    - colorMap : map<Player,Color>
+    + removePlayer() : void
+    + addPlayer() : void
+    + getCurrentPlayer() : Color
+    + getCheckerArray() : Array<Array<Integer>>
+    + moveChecker(oldX : int, oldY: int, newX: int, newY : int, player : Player)
+    + getWinnerLine() : Player[]
+    + getCurrentPlayer : Player
+    + skipTurn(player : Player) : void
+    + getCheckerArray() : Color[][]
+    + getMask() : boolean[][]
+    + setReady(status : boolean)
+    + getPlayerArray() : String[]
+    + getPlayerMap() : Map<String, Color>
+    - updatePlayerLine() : void
+    - updateGameStatus() : void
+
 }
 class Server{
-    lobbies : LinkedList<Lobby>
-    players : LinkedList<Player>
-    interpretCommand()
+    -lobbies : LinkedList<Lobby>
+    -players : LinkedList<Player>
+    -maxNumberOfPlayers : int
+    -port : int
+    -pool : FixedThreadPool
+    -running : boolean
+    +start() : void
 }
 enum Color{
     RED
@@ -117,5 +174,7 @@ enum Seat{
     SOUTHEAST,
     SOUTHWEST
 }
+
+enum Type
 
 @enduml

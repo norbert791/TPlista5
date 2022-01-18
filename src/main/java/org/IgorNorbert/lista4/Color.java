@@ -14,15 +14,15 @@ public enum Color implements Serializable {
     YELLOW;
 
     /**
-     * Maps colors to integer values
+     * Maps colors to integer values.
      * @param color color whose value we want to retrieve
      * @return the Integer of chosen color or null if parameter was null
      */
-    public static Integer toInteger(Color color){
-        if(color == null){
+    public static Integer toInteger(final Color color) {
+        if (color == null) {
             return null;
         }
-        return switch (color){
+        return switch (color) {
             case RED -> 1;
             case GREEN -> 2;
             case BLUE -> 3;
@@ -31,8 +31,14 @@ public enum Color implements Serializable {
             case YELLOW -> 6;
         };
     }
-    public static Color toColor(Integer integer){
-        return switch (integer){
+
+    /**
+     * Translates Integer to color.
+     * @param integer Integer for translation
+     * @return Color corresponding to given Integer
+     */
+    public static Color toColor(final Integer integer) {
+        return switch (integer) {
             case 1 -> RED;
             case 2 -> GREEN;
             case 3 -> BLUE;
