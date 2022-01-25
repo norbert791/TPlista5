@@ -1,6 +1,6 @@
 # TPlista4
 Semestr 3 Technologie Programowania lista4
 
-The goal of this project was (is) to create a simple client-server based java app for playing Sternhalma (Chinese checkers). The main contributors are:
-* Norbert Jaśniewicz
-* Igor Urbanowicz
+To run program change your working directory to target and run command(s):
+java -cp lista4-1.0-SNAPSHOT.jar org.Norbert.lista4.Server.Server <-- to run server
+java -cp lista4-1.0-SNAPSHOT.jar org.Norbert.lista4.ClientLogic.ClientLogic <-- to run client

@@ -1,4 +1,34 @@
 -------------------------------------------------------------------------------
 Test set: org.IgorNorbert.lista4.PlayerTest
 -------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s - in org.IgorNorbert.lista4.PlayerTest
+Tests run: 5, Failures: 0, Errors: 5, Skipped: 0, Time elapsed: 0.022 s <<< FAILURE! - in org.IgorNorbert.lista4.PlayerTest
+testGetPlayerArray  Time elapsed: 0.012 s  <<< ERROR!
+java.lang.NoClassDefFoundError: org/IgorNorbert/lista4/AllSeatsTakenException
+	at org.IgorNorbert.lista4.PlayerTest.testGetPlayerArray(PlayerTest.java:105)
+Caused by: java.lang.ClassNotFoundException: org.IgorNorbert.lista4.AllSeatsTakenException
+	at org.IgorNorbert.lista4.PlayerTest.testGetPlayerArray(PlayerTest.java:105)
+
+updateLobbyList  Time elapsed: 0.001 s  <<< ERROR!
+java.lang.NoClassDefFoundError: org/IgorNorbert/lista4/NotThisPlayerTurnException
+	at org.IgorNorbert.lista4.PlayerTest.updateLobbyList(PlayerTest.java:141)
+Caused by: java.lang.ClassNotFoundException: org.IgorNorbert.lista4.NotThisPlayerTurnException
+	at org.IgorNorbert.lista4.PlayerTest.updateLobbyList(PlayerTest.java:141)
+
+setReadyTest  Time elapsed: 0.002 s  <<< ERROR!
+java.lang.NoClassDefFoundError: org/IgorNorbert/lista4/AllSeatsTakenException
+	at org.IgorNorbert.lista4.PlayerTest.setReadyTest(PlayerTest.java:44)
+Caused by: java.lang.ClassNotFoundException: org.IgorNorbert.lista4.AllSeatsTakenException
+	at org.IgorNorbert.lista4.PlayerTest.setReadyTest(PlayerTest.java:44)
+
+joinLobbyTest  Time elapsed: 0.003 s  <<< ERROR!
+java.lang.NoClassDefFoundError: org/IgorNorbert/lista4/AllSeatsTakenException
+	at org.IgorNorbert.lista4.PlayerTest.joinLobbyTest(PlayerTest.java:15)
+Caused by: java.lang.ClassNotFoundException: org.IgorNorbert.lista4.AllSeatsTakenException
+	at org.IgorNorbert.lista4.PlayerTest.joinLobbyTest(PlayerTest.java:15)
+
+leaveTest  Time elapsed: 0.001 s  <<< ERROR!
+java.lang.NoClassDefFoundError: org/IgorNorbert/lista4/AllSeatsTakenException
+	at org.IgorNorbert.lista4.PlayerTest.leaveTest(PlayerTest.java:80)
+Caused by: java.lang.ClassNotFoundException: org.IgorNorbert.lista4.AllSeatsTakenException
+	at org.IgorNorbert.lista4.PlayerTest.leaveTest(PlayerTest.java:80)
+
