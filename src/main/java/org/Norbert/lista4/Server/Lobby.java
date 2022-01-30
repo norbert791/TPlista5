@@ -154,7 +154,7 @@ public class Lobby {
     }
 
     /**
-     * Move checker from one position on board to another.
+     * temp checker from one position on board to another.
      * @param oldX old x coordinate
      * @param oldY old y coordinate
      * @param newX new x coordinate

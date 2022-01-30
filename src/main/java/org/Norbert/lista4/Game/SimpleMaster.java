@@ -155,7 +155,7 @@ public class SimpleMaster implements GameMaster {
     }
 
     /**
-     * Move the checker from old position to the new one.
+     * temp the checker from old position to the new one.
      * @param oldX x coordinate of checker
      * @param oldY y coordinate of checker
      * @param newX x coordinate of move
