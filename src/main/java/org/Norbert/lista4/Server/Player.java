@@ -24,8 +24,8 @@ public class Player implements Runnable {
     /**
      * Nickname of player instance. For now randomized as placeholder.
      */
-    private String nickName = "test95";
-            //+ ThreadLocalRandom.current().nextInt(100);
+    private String nickName = "test"
+            + ThreadLocalRandom.current().nextInt(100);
     /**
      * Lobby the player is currently connected to.
      */
@@ -57,12 +57,11 @@ public class Player implements Runnable {
      * @param parent reference to server that spawns the thread
      * @param socket reference to socket used for exchanging data with client
      */
-    public Player(final Server parent, final Socket socket) {
+    public Player(final Server parent, final Socket socket, HistoryRetriever retriever) {
         this.lobbyArray = parent.getLobbyArray();
         this.parent = parent;
         this.socket = socket;
-        ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
-        retriever = (SimpleRetriever) context.getBean("SimpleRetriever");
+        this.retriever = retriever;
     }
 
     /**

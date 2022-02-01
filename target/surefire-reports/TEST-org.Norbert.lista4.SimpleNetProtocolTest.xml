@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="org.Norbert.lista4.SimpleNetProtocolTest" time="0.004" tests="1" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="org.Norbert.lista4.SimpleNetProtocolTest" time="0.002" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -12,7 +12,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="PL"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-17-oracle/lib"/>
-    <property name="sun.java.command" value="/home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/target/surefire/surefirebooter18320929912080749794.jar /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/target/surefire 2022-02-01T01-18-30_641-jvmRun1 surefire15012814395085668441tmp surefire_010037898169213287651tmp"/>
+    <property name="sun.java.command" value="/home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/target/surefire/surefirebooter7479028007728015759.jar /home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/target/surefire 2022-02-01T10-44-59_898-jvmRun1 surefire14898723164687954108tmp surefire_018262116131576180032tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/target/test-classes:/home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/target/classes:/home/seeker/.m2/repository/junit/junit/4.11/junit-4.11.jar:/home/seeker/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/seeker/.m2/repository/org/junit/jupiter/junit-jupiter/5.8.2/junit-jupiter-5.8.2.jar:/home/seeker/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.8.2/junit-jupiter-api-5.8.2.jar:/home/seeker/.m2/repository/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar:/home/seeker/.m2/repository/org/junit/platform/junit-platform-commons/1.8.2/junit-platform-commons-1.8.2.jar:/home/seeker/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/home/seeker/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.8.2/junit-jupiter-params-5.8.2.jar:/home/seeker/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.8.2/junit-jupiter-engine-5.8.2.jar:/home/seeker/.m2/repository/org/junit/platform/junit-platform-engine/1.8.2/junit-platform-engine-1.8.2.jar:/home/seeker/.m2/repository/org/springframework/spring-context/4.3.0.RELEASE/spring-context-4.3.0.RELEASE.jar:/home/seeker/.m2/repository/org/springframework/spring-aop/4.3.0.RELEASE/spring-aop-4.3.0.RELEASE.jar:/home/seeker/.m2/repository/org/springframework/spring-beans/4.3.0.RELEASE/spring-beans-4.3.0.RELEASE.jar:/home/seeker/.m2/repository/org/springframework/spring-expression/4.3.0.RELEASE/spring-expression-4.3.0.RELEASE.jar:/home/seeker/.m2/repository/org/springframework/spring-core/4.3.0.RELEASE/spring-core-4.3.0.RELEASE.jar:/home/seeker/.m2/repository/commons-logging/commons-logging/1.2/commons-logging-1.2.jar:/home/seeker/.m2/repository/org/springframework/spring-jdbc/4.3.0.RELEASE/spring-jdbc-4.3.0.RELEASE.jar:/home/seeker/.m2/repository/org/springframework/spring-tx/4.3.0.RELEASE/spring-tx-4.3.0.RELEASE.jar:/home/seeker/.m2/repository/org/mariadb/jdbc/mariadb-java-client/1.5.7/mariadb-java-client-1.5.7.jar:/home/seeker/.m2/repository/org/springframework/spring-test/4.3.0.RELEASE/spring-test-4.3.0.RELEASE.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -27,7 +27,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="/home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/target/surefire/surefirebooter18320929912080749794.jar"/>
+    <property name="surefire.real.class.path" value="/home/seeker/Dokumenty/wppt/semestr3/technologieProgramowania/lista4/target/surefire/surefirebooter7479028007728015759.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="17.0.1+12-LTS-39"/>
     <property name="user.name" value="seeker"/>
@@ -51,5 +51,5 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="61.0"/>
   </properties>
-  <testcase name="creationTest" classname="org.Norbert.lista4.SimpleNetProtocolTest" time="0.004"/>
+  <testcase name="creationTest" classname="org.Norbert.lista4.SimpleNetProtocolTest" time="0.002"/>
 </testsuite>

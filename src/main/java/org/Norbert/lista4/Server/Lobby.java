@@ -1,5 +1,6 @@
 package org.Norbert.lista4.Server;
 
+import org.Norbert.lista4.ClientUI.MenuBar;
 import org.Norbert.lista4.Database.GameLogger;
 import org.Norbert.lista4.Database.SimpleRetriever;
 import org.Norbert.lista4.Game.*;
@@ -50,9 +51,8 @@ public class Lobby {
 
     private final GameLogger logger;
 
-    public Lobby() {
-        ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
-        logger = (GameLogger) context.getBean("SimpleLogger");
+    public Lobby(GameLogger logger) {
+        this.logger = logger;
     }
     /**
      * Adds player to the lobby.

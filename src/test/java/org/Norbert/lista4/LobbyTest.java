@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LobbyTest {
     @Test
     public void addPlayerTest(){
-        final Lobby test = new Lobby();
+        final Lobby test = new Lobby(new MockLogger());
         Player[] players = new Player[7];
         for ( int i = 0; i < players.length; i++ ){
             players[i] = new Player();
@@ -38,7 +38,7 @@ public class LobbyTest {
             Field playerMap = Lobby.class.getDeclaredField("playerMap");
             Field readinessMap = Lobby.class.getDeclaredField("readinessMap");
             Field line = Lobby.class.getDeclaredField("forfeitLine");
-            Lobby test = new Lobby();
+            Lobby test = new Lobby(new MockLogger());
             Player[] players = new Player[3];
             for (int i = 0; i < 3; i++){
                 players[i] = new Player();
@@ -82,7 +82,7 @@ public class LobbyTest {
     public void moveCheckerTest() {
         Player player1 = new Player();
         Player player2 = new Player();
-        Lobby test = new Lobby();
+        Lobby test = new Lobby(new MockLogger());
 
         try {
             assertThrowsExactly(NotThisLobbyException.class, () ->
@@ -118,7 +118,7 @@ public class LobbyTest {
         else{
             Assertions.assertDoesNotThrow(() -> test.moveChecker(9,13,8,12, currentPlayer));
         }
-       // assertDoesNotThrow(() -> test.removePlayer(test.getCurrentPlayer()));
-       // assertEquals(test.getWinnerLine()[0], currentPlayer);
+        assertDoesNotThrow(() -> test.removePlayer(test.getCurrentPlayer()));
+        assertEquals(test.getWinnerLine()[0], currentPlayer);
     }
 }

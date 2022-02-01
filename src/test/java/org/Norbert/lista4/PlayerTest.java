@@ -1,5 +1,8 @@
 package org.Norbert.lista4;
 
+import org.Norbert.lista4.Database.GameDescriptionRecord;
+import org.Norbert.lista4.Database.GameRecord;
+import org.Norbert.lista4.Database.HistoryRetriever;
 import org.Norbert.lista4.Game.Color;
 import org.Norbert.lista4.Protocol.NetPackage;
 import org.Norbert.lista4.Server.*;
@@ -15,7 +18,7 @@ public class PlayerTest {
 
     @Test
     public void joinLobbyTest(){
-        final Lobby[] lobby = {new Lobby()};
+        final Lobby[] lobby = {new Lobby(new MockLogger())};
         final Player player1 = new Player();
         final Player player2 = new Player();
         Field field = null;
@@ -44,7 +47,7 @@ public class PlayerTest {
     }
     @Test
     void setReadyTest() {
-        final Lobby[] lobby = {new Lobby()};
+        final Lobby[] lobby = {new Lobby(new MockLogger())};
         final Player player1 = new Player();
         final Player player2 = new Player();
         Field field = null;
@@ -80,7 +83,7 @@ public class PlayerTest {
     }
     @Test
     void leaveTest(){
-        final Lobby lobby = new Lobby();
+        final Lobby lobby = new Lobby(new MockLogger());
         final Player player1 = new Player();
         Field field = null;
         Method leave = null;
@@ -105,7 +108,7 @@ public class PlayerTest {
     }
     @Test
     void testGetPlayerArray(){
-        final Lobby lobby = new Lobby();
+        final Lobby lobby = new Lobby(new MockLogger());
         final Player player1 = new Player();
         final Player player2 = new Player();
         Field field;
@@ -141,7 +144,7 @@ public class PlayerTest {
     @Test
     void updateLobbyList(){
         Server server = new Server(7777);
-        Player player = new Player(server, new Socket());
+        Player player = new Player(server, new Socket(), new MockRetriever());
         try {
             Field field = Player.class.getDeclaredField("lobbyArray");
             Method method = Player.class.getDeclaredMethod("updateLobbyArray");
@@ -155,6 +158,30 @@ public class PlayerTest {
         } catch (NoSuchFieldException | InvocationTargetException |
                 IllegalAccessException | NoSuchMethodException e) {
             e.printStackTrace();
+        }
+    }
+    private class MockRetriever implements HistoryRetriever {
+
+        /**
+         * Get list of games
+         *
+         * @param nick_name nick of the player whose games should be fetched
+         * @return Array of games available for retrieval
+         */
+        @Override
+        public GameDescriptionRecord[] fetchGameList(String nick_name) {
+            return new GameDescriptionRecord[0];
+        }
+
+        /**
+         * Fetched moves of selected game
+         *
+         * @param game_id id of games whose moves should be retrieved
+         * @return Array of Player moves for reconstructing game
+         */
+        @Override
+        public GameRecord fetchHistory(int game_id) {
+            return null;
         }
     }
 }

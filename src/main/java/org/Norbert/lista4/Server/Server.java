@@ -3,6 +3,11 @@ package org.Norbert.lista4.Server;
 // can be implemented e.g. kicking players, removing lobbies, ...
 //TODO some values should be customizable rather than hardcoded
 //TODO Server is locking when waiting for connection.
+import org.Norbert.lista4.Database.GameLogger;
+import org.Norbert.lista4.Database.SimpleRetriever;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -15,6 +20,8 @@ import java.util.concurrent.Executors;
  * Class used for server initialization and thread management.
  */
 public class Server {
+    private final ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
+
     /**
      * Collection of Lobbies.
      */
@@ -66,7 +73,8 @@ public class Server {
         while (running) {
            Socket connection = socket.accept();
            if (playersList.size() < maxNumberOfConnections) {
-               Player temp = new Player(this, connection);
+               Player temp = new Player(this, connection,
+                       (SimpleRetriever) context.getBean("SimpleRetriever"));
                pool.execute(temp);
                System.out.println("User connected");
            }
@@ -86,7 +94,7 @@ public class Server {
                             + numberOfLobbies);
         } else {
             for (int i = 0; i < numberOfLobbies; i++) {
-                lobbyList.add(new Lobby());
+                lobbyList.add(new Lobby((GameLogger) context.getBean("SimpleLogger")));
             }
         }
     }

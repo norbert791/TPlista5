@@ -46,12 +46,15 @@ public class GameReconstructionPanel extends JPanel { //TODO: Merge with gamePan
         }
     }
     public void nextMove() {
-        if (moveCounter < moves.length && moves[moveCounter].
-                moveType() == PlayerMove.MoveType.CHECKER_MOVE) {
+        if (moveCounter < moves.length && moves[moveCounter]
+                .moveType() == PlayerMove.MoveType.CHECKER_MOVE) {
             PlayerMove.CheckerMove temp = moves[moveCounter].checkerMove();
             boardField[temp.oldY()][temp.oldX()].setBackground(Color.white);
             boardField[temp.newY()][temp.newX()].setBackground(
                     translateColor(moves[moveCounter].playerColor()));
+            moveCounter++;
+        }
+        else if (moveCounter < moves.length ) {
             moveCounter++;
         }
     }
@@ -64,6 +67,9 @@ public class GameReconstructionPanel extends JPanel { //TODO: Merge with gamePan
             boardField[temp.oldY()][temp.oldX()].setBackground(translateColor(
                     moves[moveCounter].playerColor()));
             boardField[temp.newY()][temp.newX()].setBackground(Color.white);
+        }
+        else if (moveCounter > 0) {
+            moveCounter--;
         }
     }
 
