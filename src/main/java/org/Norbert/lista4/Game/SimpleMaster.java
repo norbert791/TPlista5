@@ -2,6 +2,7 @@ package org.Norbert.lista4.Game;
 
 import org.Norbert.lista4.Game.Exceptions.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
@@ -79,6 +80,22 @@ public class SimpleMaster implements GameMaster {
             if (!map.containsValue(temp)) {
                 map.put(seat, temp);
                 return temp;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get seat to which player represented by color was assigned
+     *
+     * @param color color of player whose seat we want to take
+     * @return Seat of the player represented by color
+     */
+    @Override
+    public Seat getSeat(Color color) {
+        for (Seat seat : map.keySet()) {
+            if(map.get(seat) == color) {
+                return seat;
             }
         }
         return null;
@@ -281,6 +298,29 @@ public class SimpleMaster implements GameMaster {
     @Override
     public boolean[][] boardMask() {
         return this.board.getMask();
+    }
+
+    /**
+     * Retrieve the snapshot of initial
+     * board for given map representing where each player seats.
+     *
+     * @param seatColorMap map representing how each color is placed
+     * @return Array with initial state for given map
+     */
+    @Override
+    public Color[][] initialBoard(Map<Seat, Color> seatColorMap) {
+        Board temp;
+        try {
+            temp = board.getClass().getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | NoSuchMethodException
+                | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
+        for (Seat seat : seatColorMap.keySet()) {
+            temp.setCorner(seat, seatColorMap.get(seat));
+        }
+        return temp.getCheckerColorArray();
     }
 
     /**

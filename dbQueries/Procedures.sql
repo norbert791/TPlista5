@@ -2,11 +2,11 @@ USE `techprog.lista5`;
 
 DELIMITER $$
 
-CREATE PROCEDURE create_game(OUT gameId INTEGER)
+CREATE PROCEDURE create_game(IN game_type VARCHAR(100), OUT gameId INTEGER)
 BEGIN
     DECLARE temp BINARY(16);
     SET temp = UNHEX(REPLACE(UUID(),'-',''));
-    INSERT INTO game (game.creationTime, game.uid) VALUE (CURRENT_TIMESTAMP, temp);
+    INSERT INTO game (game.creationTime, gameType, game.uid) VALUE (CURRENT_TIMESTAMP, game_type, temp);
     SET gameId = (SELECT id FROM game WHERE uid = temp);
 END $$
 
@@ -14,7 +14,10 @@ DELIMITER ;
 
 DELIMITER $$
 
-CREATE PROCEDURE insert_player(IN PlayerColor ENUM('RED', 'GREEN', 'BLUE', 'CYAN', 'MAGENTA', 'YELLOW'),
+CREATE PROCEDURE insert_player(IN PlayerColor
+    ENUM('RED', 'GREEN', 'BLUE', 'CYAN', 'MAGENTA', 'YELLOW'),
+    IN playerSeat ENUM('NORTH', 'SOUTH','NORTH_EAST', 'NORTH_WEST',
+        'SOUTH_EAST', 'SOUTH_WEST'),
 IN nick_name VARCHAR(50), IN game_id INTEGER, OUT player_id INTEGER)
 BEGIN
     DECLARE player INTEGER;
@@ -24,7 +27,7 @@ BEGIN
         INSERT INTO player (nickname) VALUE (nick_name);
         SET player = (SELECT id FROM player WHERE nickname = nick_name);
     END IF;
-    INSERT INTO lobbyPlayer(playerId, gameId, color) VALUE (player, game_id, PlayerColor);
+    INSERT INTO lobbyPlayer(playerId, gameId, color, seat) VALUE (player, game_id, PlayerColor, playerSeat);
     SET player_id = player;
 END $$
 
@@ -64,7 +67,7 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE list_games(IN player_nick VARCHAR(50))
     BEGIN
-        SELECT game.id, game.creationTime FROM game
+        SELECT game.id, game.gameType, game.creationTime FROM game
             INNER JOIN lobbyPlayer ON game.id = lobbyPlayer.gameId
             INNER JOIN player ON lobbyPlayer.playerId = player.id
             WHERE player.nickname LIKE player_nick;
@@ -74,7 +77,7 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE list_players(IN game_id INTEGER)
     BEGIN
-        SELECT lobbyPlayer.color, player.nickname
+        SELECT lobbyPlayer.color, lobbyPlayer.seat, player.nickname
         FROM lobbyPlayer INNER JOIN player ON lobbyPlayer.playerId = player.id
         WHERE lobbyPlayer.gameId = game_id;
     END ;
@@ -88,6 +91,16 @@ CREATE PROCEDURE list_moves(IN game_id INTEGER)
         FROM lobbyPlayer
         INNER JOIN move ON lobbyPlayer.playerId = move.playerId
         LEFT JOIN checkerMove ON move.checkerMove = checkerMove.id
-        WHERE move.gameId = game_id;
+        WHERE move.gameId = game_id
+        ORDER BY move.orderingNumber;
+    END ;
+DELIMITER ;
+
+DELIMITER $$
+CREATE FUNCTION fetch_type(game_id INTEGER) RETURNS VARCHAR(100)
+    BEGIN
+        DECLARE temp VARCHAR(100);
+        SET temp = (SELECT gameType FROM game WHERE id = game_id);
+        RETURN temp;
     END ;
 DELIMITER ;

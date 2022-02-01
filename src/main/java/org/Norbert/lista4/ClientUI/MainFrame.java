@@ -1,6 +1,9 @@
 package org.Norbert.lista4.ClientUI;
 
 import org.Norbert.lista4.ClientLogic.ClientLogic;
+import org.Norbert.lista4.ClientUI.MatchHistory.HistoryFrame;
+import org.Norbert.lista4.Database.GameDescriptionRecord;
+import org.Norbert.lista4.Database.GameRecord;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +25,7 @@ public class MainFrame extends JFrame implements UserInterface {
     private JScrollPane lobbies;
     private org.Norbert.lista4.Game.Color playerColor;
     private org.Norbert.lista4.Game.Color currentPlayerColor;
+    private HistoryFrame historyFrame;
 
     /**
      * Constructor.
@@ -192,6 +196,28 @@ public class MainFrame extends JFrame implements UserInterface {
     }
 
     /**
+     * Prints list of all matches that user has played.
+     *
+     * @param records array of records with data about the games
+     */
+    @Override
+    public void printHistory(GameDescriptionRecord[] records) {
+        historyFrame = new HistoryFrame(this, records);
+    }
+
+    /**
+     * Print gameRecord
+     *
+     * @param record gameRecord
+     */
+    @Override
+    public void printGameRecord(GameRecord record) {
+        if (historyFrame != null) {
+            historyFrame.printGame(record);
+        }
+    }
+
+    /**
      * Get color of the player currently making their move.
      * @return Color of the current player
      */
@@ -283,5 +309,13 @@ public class MainFrame extends JFrame implements UserInterface {
             case GREEN -> Color.green;
             case BLUE -> Color.blue;
         };
+    }
+
+    public void showHistory() {
+        clientLogic.fetchHistory();
+    }
+
+    public void fetchGame(int gameId) {
+        clientLogic.fetchGame(gameId);
     }
 }

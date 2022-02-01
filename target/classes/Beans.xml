@@ -20,5 +20,10 @@
       class = "org.Norbert.lista4.Database.SimpleLogger">
       <property name = "dataSource" ref = "dataSource" />    
    </bean>
+
+   <bean id = "SimpleRetriever"
+         class = "org.Norbert.lista4.Database.SimpleRetriever">
+         <property name="dataSource" ref = "dataSource" />
+   </bean>
       
 </beans>

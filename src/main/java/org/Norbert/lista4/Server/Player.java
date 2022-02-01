@@ -1,10 +1,16 @@
 package org.Norbert.lista4.Server;
 
+import org.Norbert.lista4.Database.GameDescriptionRecord;
+import org.Norbert.lista4.Database.GameRecord;
+import org.Norbert.lista4.Database.HistoryRetriever;
+import org.Norbert.lista4.Database.SimpleRetriever;
 import org.Norbert.lista4.Game.Exceptions.IncorrectMoveException;
 import org.Norbert.lista4.Game.Exceptions.NotThisPlayerTurnException;
 import org.Norbert.lista4.Protocol.NetPackage;
 import org.Norbert.lista4.Protocol.NetProtocolServer;
 import org.Norbert.lista4.Protocol.SimpleNetProtocolFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -18,8 +24,8 @@ public class Player implements Runnable {
     /**
      * Nickname of player instance. For now randomized as placeholder.
      */
-    private String nickName = "default "
-            + ThreadLocalRandom.current().nextInt(100);
+    private String nickName = "test95";
+            //+ ThreadLocalRandom.current().nextInt(100);
     /**
      * Lobby the player is currently connected to.
      */
@@ -45,6 +51,7 @@ public class Player implements Runnable {
      */
     private NetProtocolServer protocol = null;
 
+    private HistoryRetriever retriever;
     /**
      * Constructor used for spawning connection thread.
      * @param parent reference to server that spawns the thread
@@ -54,6 +61,8 @@ public class Player implements Runnable {
         this.lobbyArray = parent.getLobbyArray();
         this.parent = parent;
         this.socket = socket;
+        ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
+        retriever = (SimpleRetriever) context.getBean("SimpleRetriever");
     }
 
     /**
@@ -62,6 +71,7 @@ public class Player implements Runnable {
     public Player() {
         this.parent = null;
         socket = null;
+        retriever = null;
     }
 
     /**
@@ -349,6 +359,14 @@ public class Player implements Runnable {
                  case WINORDER -> winOrder();
                  case PlAYERLIST -> playerList();
                  case BOARDMASK -> getMask();
+                 case FETCH_HISTORY -> {
+                     GameDescriptionRecord[] temp = retriever.fetchGameList(nickName);
+                     yield new NetPackage(NetPackage.Type.FETCH_HISTORY, temp);
+                 }
+                 case FETCH_GAME_RECORD -> {
+                     GameRecord temp = retriever.fetchHistory((int) message.getArgument());
+                     yield new NetPackage(NetPackage.Type.FETCH_GAME_RECORD, temp);
+                 }
                  case ERROR, CONNECT -> {
                      NetPackage temp = new NetPackage();
                      temp.type = NetPackage.Type.ERROR;

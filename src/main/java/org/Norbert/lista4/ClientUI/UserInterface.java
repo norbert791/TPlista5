@@ -1,5 +1,7 @@
 package org.Norbert.lista4.ClientUI;
 
+import org.Norbert.lista4.Database.GameDescriptionRecord;
+import org.Norbert.lista4.Database.GameRecord;
 import org.Norbert.lista4.Game.Color;
 
 import java.util.Map;
@@ -69,5 +71,17 @@ public interface UserInterface {
     /**
      * Sets UI's board mask.
      */
-    public void setMask(boolean[][] boardMask);
+    void setMask(boolean[][] boardMask);
+
+    /**
+     * Prints list of all matches that user has played.
+     * @param records array of records with data about the games
+     */
+    void printHistory(GameDescriptionRecord[] records);
+
+    /**
+     * Print gameRecord
+     * @param record gameRecord
+     */
+    void printGameRecord(GameRecord record);
 }

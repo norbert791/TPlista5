@@ -25,7 +25,9 @@ public class NetPackage implements Serializable {
         SKIP,
         CURRENTPLAYER,
         PlAYERLIST,
-        WINORDER;
+        WINORDER,
+        FETCH_HISTORY,
+        FETCH_GAME_RECORD
     }
 
     /**

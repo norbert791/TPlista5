@@ -1,6 +1,7 @@
 package org.Norbert.lista4.Database;
 
 import org.Norbert.lista4.Game.Color;
+import org.Norbert.lista4.Game.Seat;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
@@ -15,10 +16,11 @@ import java.util.Map;
 
 public class SimpleLogger implements GameLogger{
     private final List<PlayerMove> playerMoves = new ArrayList<>();
-    private boolean[][] boardShape;
+    private String gameType;
     private DataSource dataSource;
     private JdbcTemplate jdbcTemplateObject;
     private final Map<String, Color> playerMap = new HashMap<>();
+    private final Map<String, Seat> playerSeat = new HashMap<>();
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -65,24 +67,29 @@ public class SimpleLogger implements GameLogger{
      */
     @Override
     public void commitGame() {
+        if (gameType == null) {//TODO consider throwing exception
+            return;
+        }
         Integer gameId;
         Map<String, Object> out;
         Map<Color, Integer> colorIntegerMap = new HashMap<>();
         SimpleJdbcCall temp = new SimpleJdbcCall(jdbcTemplateObject)
                 .withProcedureName("create_game").declareParameters(
+                        new SqlParameter("game_type", Types.VARCHAR),
                         new SqlOutParameter("gameId", Types.INTEGER));
-        out = temp.execute();
+        out = temp.execute(gameType);
         gameId = (Integer) out.get("gameId");
         temp = new SimpleJdbcCall(jdbcTemplateObject)
                 .withProcedureName("insert_player").declareParameters(
                         new SqlParameter("PlayerColor", Types.VARCHAR),
+                        new SqlParameter("playerSeat", Types.VARCHAR),
                         new SqlParameter("nickname", Types.VARCHAR),
                         new SqlParameter("game_id", Types.INTEGER),
                         new SqlOutParameter("player_id", Types.INTEGER)
                 );
         for (String tempString : playerMap.keySet()) {
             out = temp.execute(colorToString(playerMap.get(tempString)),
-                    tempString, gameId);
+                    playerSeatToString(playerSeat.get(tempString)), tempString, gameId);
             colorIntegerMap.put(playerMap.get(tempString), (Integer) out.get("player_id"));
         }
         temp = new SimpleJdbcCall(jdbcTemplateObject).
@@ -120,16 +127,19 @@ public class SimpleLogger implements GameLogger{
     @Override
     public void clear() {
         playerMoves.clear();
+        playerSeat.clear();
+        playerMap.clear();
+        gameType = null;
     }
 
     /**
      * Stores the shape of the board for reference.
      *
-     * @param board array representing the board's shape
+     * @param gameType array representing the board's shape
      */
     @Override
-    public void storeBoardShape(boolean[][] board) {
-        boardShape = board;
+    public void insertGameType(String gameType) {
+        this.gameType = gameType;
     }
 
     /**
@@ -137,10 +147,12 @@ public class SimpleLogger implements GameLogger{
      *
      * @param playerName  name of the player
      * @param playerColor color of the player
+     * @param playerSeat seat assigned to the player
      */
     @Override
-    public void addPlayer(String playerName, Color playerColor) {
+    public void addPlayer(String playerName, Color playerColor, Seat playerSeat) {
         playerMap.put(playerName, playerColor);
+        this.playerSeat.put(playerName, playerSeat);
     }
 
     /**
@@ -169,6 +181,21 @@ public class SimpleLogger implements GameLogger{
             case SKIP -> "skip";
             case SURRENDER -> "surrender";
             case CHECKER_MOVE -> "checker";
+        };
+    }
+
+    /**
+     * Translates Seat type to enum type for mariaDB
+     * @return String representing maria enum type
+     */
+    private String playerSeatToString(Seat seat) {
+        return switch (seat) {
+            case NORTH -> "NORTH";
+            case SOUTH -> "SOUTH";
+            case NORTHEAST -> "NORTH_EAST";
+            case NORTHWEST -> "NORTH_WEST";
+            case SOUTHEAST -> "SOUTH_EAST";
+            case SOUTHWEST -> "SOUTH_WEST";
         };
     }
 }

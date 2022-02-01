@@ -1,6 +1,8 @@
 package org.Norbert.lista4.ClientLogic;
 import org.Norbert.lista4.ClientUI.MainFrame;
 import org.Norbert.lista4.ClientUI.UserInterface;
+import org.Norbert.lista4.Database.GameDescriptionRecord;
+import org.Norbert.lista4.Database.GameRecord;
 import org.Norbert.lista4.Game.Color;
 import org.Norbert.lista4.Protocol.NetPackage;
 import org.Norbert.lista4.Protocol.NetProtocolClient;
@@ -150,6 +152,10 @@ public class ClientLogic {
                     userInterface.setMask((boolean[][]) result.getArgument());
                     userInterface.printLobby();
                 }
+                case FETCH_HISTORY -> userInterface.printHistory(
+                        (GameDescriptionRecord[]) result.getArgument());
+                case FETCH_GAME_RECORD -> userInterface.printGameRecord(
+                        (GameRecord) result.getArgument());
             }
         } catch (ClassCastException e) { //These exceptions shouldn't occur
             e.printStackTrace();
@@ -238,6 +244,20 @@ public class ClientLogic {
             return;
         }
         transform(State.DISCONNECTED);
+    }
+
+    public void fetchHistory() {
+        if (state == State.CONNECTED) {
+            NetPackage temp = new NetPackage();
+            temp.type = NetPackage.Type.FETCH_HISTORY;
+            nextCommand.add(temp);
+        }
+    }
+
+    public void fetchGame(int gameId) {
+        if (state == State.CONNECTED) {
+            nextCommand.add(new NetPackage(NetPackage.Type.FETCH_GAME_RECORD, gameId));
+        }
     }
 
     /**

@@ -1,6 +1,9 @@
 package org.Norbert.lista4.Game;
-
+//TODO divide it into two interfaces and separate
+// game managing methods from game meta-data methods
 import org.Norbert.lista4.Game.Exceptions.*;
+
+import java.util.Map;
 
 /**
  * Interface for Chinese checker game manager.
@@ -23,6 +26,13 @@ public interface GameMaster {
      * @throws SeatTakenException iff The chosen seat has already been taken
      */
     Color addPlayer(Seat seat) throws SeatTakenException;
+
+    /**
+     * Get seat to which player represented by color was assigned
+     * @param color color of player whose seat we want to take
+     * @return Seat of the player represented by color
+     */
+    Seat getSeat(Color color);
 
     /**
      * Removes all checkers from the board.
@@ -99,4 +109,12 @@ public interface GameMaster {
      * @return a field is false iff it's permanently off limits
      */
     boolean[][] boardMask();
+
+    /**
+     * Retrieve the snapshot of initial
+     * board for given map representing where each player seats.
+     * @param seatColorMap map representing how each color is placed
+     * @return Array with initial state for given map
+     */
+    Color[][] initialBoard(Map<Seat, Color> seatColorMap);
 }

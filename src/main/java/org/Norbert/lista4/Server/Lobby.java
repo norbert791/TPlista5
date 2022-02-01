@@ -1,10 +1,14 @@
 package org.Norbert.lista4.Server;
 
+import org.Norbert.lista4.Database.GameLogger;
+import org.Norbert.lista4.Database.SimpleRetriever;
 import org.Norbert.lista4.Game.*;
 import org.Norbert.lista4.Game.Exceptions.AllSeatsTakenException;
 import org.Norbert.lista4.Game.Exceptions.IncorrectMoveException;
 import org.Norbert.lista4.Game.Exceptions.IncorrectNumberOfPlayersException;
 import org.Norbert.lista4.Game.Exceptions.NotThisPlayerTurnException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,6 +48,12 @@ public class Lobby {
      */
     private final Collection<Player> winnersLine = new ArrayList<>();
 
+    private final GameLogger logger;
+
+    public Lobby() {
+        ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
+        logger = (GameLogger) context.getBean("SimpleLogger");
+    }
     /**
      * Adds player to the lobby.
      * @param player player that should be added
@@ -80,6 +90,7 @@ public class Lobby {
             return;
         } else if (game != null) {
             forfeitLine.add(playerMap.get(player));
+            logger.insertForfeit(playerMap.get(player));
             updatePlayerLine();
             updateGameStatus();
         }
@@ -115,7 +126,9 @@ public class Lobby {
                     }
                 }
             }
+            logger.commitGame();
             game = null;
+            logger.clear();
         }
     }
 
@@ -176,6 +189,7 @@ public class Lobby {
         }
         boolean result = game.moveChecker(oldX, oldY,
                 newX, newY, playerMap.get(player));
+        logger.insertCheckerMove(oldX, oldY, newX, newY, playerMap.get(player));
         updatePlayerLine();
         updateGameStatus();
         return result;
@@ -195,6 +209,7 @@ public class Lobby {
             throw new NotThisLobbyException("You are not in this lobby");
         }
         game.skipTurn(playerMap.get(player));
+        logger.insertSkip(playerMap.get(player));
         updatePlayerLine();
         updateGameStatus();
     }
@@ -234,6 +249,12 @@ public class Lobby {
                         playerMap.replace(temp, game.addPlayer());
                     }
                     game.startGame();
+                    for (Player temp : playerMap.keySet()) {
+                        logger.addPlayer(temp.getNickName(),
+                                playerMap.get(temp),
+                                game.getSeat(playerMap.get(temp)));
+                    }
+                    logger.insertGameType(game.getClass().getSimpleName());
                 } catch (AllSeatsTakenException
                         | IncorrectNumberOfPlayersException e) {
                     for (Player temp : playerMap.keySet()) {

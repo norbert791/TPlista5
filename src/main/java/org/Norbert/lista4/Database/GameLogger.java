@@ -1,6 +1,7 @@
 package org.Norbert.lista4.Database;
 
 import org.Norbert.lista4.Game.Color;
+import org.Norbert.lista4.Game.Seat;
 
 public interface GameLogger {
     /**
@@ -37,13 +38,15 @@ public interface GameLogger {
 
     /**
      * Stores the shape of the board for reference.
+     * @param gameType Name of the GameMaster interface implementation used
      */
-    void storeBoardShape(boolean[][] board);
+    void insertGameType(String gameType);
 
     /**
      * Adds player with their name.
      * @param playerName name of the player
      * @param playerColor color of the player
+     * @param playerSeat seat assigned to the player
      */
-    void addPlayer(String playerName, Color playerColor);
+    void addPlayer(String playerName, Color playerColor, Seat playerSeat);
 }

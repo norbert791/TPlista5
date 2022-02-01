@@ -1,11 +1,13 @@
 package org.Norbert.lista4.ClientUI;
 
+import org.Norbert.lista4.ClientUI.MatchHistory.HistoryFrame;
+
 import javax.swing.*;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MenuBar extends JMenuBar implements ActionListener {
+public class MenuBar extends JMenuBar implements ActionListener { //TODO: Refactor it
     private MainFrame frame;
     private JMenu playerColor;
     private JMenu currentColor;
@@ -19,6 +21,9 @@ public class MenuBar extends JMenuBar implements ActionListener {
         tempItem.addActionListener(this);
         temp.add(tempItem);
         this.add(temp);
+        tempItem = new History();
+        tempItem.addActionListener(this);
+        temp.add(tempItem);
         Game temp2 = new Game();
         tempItem = new Leave();
         tempItem.addActionListener(this);
@@ -84,6 +89,9 @@ public class MenuBar extends JMenuBar implements ActionListener {
             super("SetReady");
         }
     }
+    private class History extends JMenuItem {
+        History() { super("History");}
+    }
     public void setPlayerColor(Color color){
         this.playerColor.setBackground(color);
         repaint();
@@ -114,6 +122,9 @@ public class MenuBar extends JMenuBar implements ActionListener {
         }
         else if(e.getSource() instanceof Ready){
             frame.setReady(true);
+        }
+        else if(e.getSource() instanceof History) {
+            frame.showHistory();
         }
 
     }

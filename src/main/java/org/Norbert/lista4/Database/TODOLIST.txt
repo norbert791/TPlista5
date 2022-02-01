@@ -1,0 +1,3 @@
+- database procedures and class implementations should use player id rather than nickname ->
+nickname is more likely to change than id.
+- Reconstructing game relies on deterministic assignment of player positions. Correct that!
