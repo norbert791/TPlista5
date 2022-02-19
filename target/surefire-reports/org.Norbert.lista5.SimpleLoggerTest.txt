@@ -1,0 +1,16 @@
+-------------------------------------------------------------------------------
+Test set: org.Norbert.lista5.SimpleLoggerTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.294 s <<< FAILURE! - in org.Norbert.lista5.SimpleLoggerTest
+commitTest  Time elapsed: 0.294 s  <<< ERROR!
+org.springframework.dao.DataAccessResourceFailureException: Error retrieving database metadata; nested exception is org.springframework.jdbc.support.MetaDataAccessException: Could not get Connection for extracting meta data; nested exception is org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is java.sql.SQLInvalidAuthorizationSpecException: Could not connect: Access denied for user 'admin'@'localhost' (using password: YES)
+	at org.Norbert.lista5.SimpleLoggerTest.commitTest(SimpleLoggerTest.java:20)
+Caused by: org.springframework.jdbc.support.MetaDataAccessException: Could not get Connection for extracting meta data; nested exception is org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is java.sql.SQLInvalidAuthorizationSpecException: Could not connect: Access denied for user 'admin'@'localhost' (using password: YES)
+	at org.Norbert.lista5.SimpleLoggerTest.commitTest(SimpleLoggerTest.java:20)
+Caused by: org.springframework.jdbc.CannotGetJdbcConnectionException: Could not get JDBC Connection; nested exception is java.sql.SQLInvalidAuthorizationSpecException: Could not connect: Access denied for user 'admin'@'localhost' (using password: YES)
+	at org.Norbert.lista5.SimpleLoggerTest.commitTest(SimpleLoggerTest.java:20)
+Caused by: java.sql.SQLInvalidAuthorizationSpecException: Could not connect: Access denied for user 'admin'@'localhost' (using password: YES)
+	at org.Norbert.lista5.SimpleLoggerTest.commitTest(SimpleLoggerTest.java:20)
+Caused by: org.mariadb.jdbc.internal.util.dao.QueryException: Could not connect: Access denied for user 'admin'@'localhost' (using password: YES)
+	at org.Norbert.lista5.SimpleLoggerTest.commitTest(SimpleLoggerTest.java:20)
+

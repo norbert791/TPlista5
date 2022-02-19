@@ -17,13 +17,13 @@
 
    <!-- Definition for studentJDBCTemplate bean -->
    <bean id = "SimpleLogger"
-      class = "org.Norbert.lista4.Database.SimpleLogger">
+      class = "org.Norbert.lista5.Database.jdbcTemplateImplementation.SimpleLogger">
       <property name = "dataSource" ref = "dataSource" />    
    </bean>
 
    <bean id = "SimpleRetriever"
-         class = "org.Norbert.lista4.Database.SimpleRetriever">
+         class = "org.Norbert.lista5.Database.jdbcTemplateImplementation.SimpleRetriever">
          <property name="dataSource" ref = "dataSource" />
    </bean>
-      
+
 </beans>
