@@ -1,15 +1,13 @@
 package org.Norbert.lista5.Database.HibernateImplementation;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
 @Table (name = "Game")
 public class Game {
     @Id
+    @GeneratedValue
     private int id;
     private String gameType;
     private Timestamp timestamp;

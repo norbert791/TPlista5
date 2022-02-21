@@ -1,19 +1,26 @@
 package org.Norbert.lista5.Database.HibernateImplementation;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "CheckerMove")
 public class CheckerMove {
     @Id
+    @GeneratedValue
     int id;
     int oldX;
     int oldY;
     int newX;
     int newY;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public int getOldX() {
         return oldX;
     }

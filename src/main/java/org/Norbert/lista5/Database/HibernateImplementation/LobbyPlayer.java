@@ -2,12 +2,12 @@ package org.Norbert.lista5.Database.HibernateImplementation;
 
 import org.Norbert.lista5.Game.Color;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
+import javax.persistence.*;
 
+@Entity
 public class LobbyPlayer {
     @Id
+    @GeneratedValue
     private int id;
     private int gameId;
     private int playerId;

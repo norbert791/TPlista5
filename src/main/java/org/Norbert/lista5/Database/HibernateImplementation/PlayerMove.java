@@ -10,6 +10,7 @@ public class PlayerMove {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+    @ManyToOne(cascade = CascadeType.ALL)
     private LobbyPlayer player;
     @Enumerated(EnumType.STRING)
     private MoveType moveType;
