@@ -87,6 +87,7 @@ public class ClientLogic {
             //While client is connected process replies and send requests
             while (state != State.DISCONNECTED) {
                 try {
+                    System.out.println(state);
                     if (protocol.isReady()) {
                         NetPackage temp = protocol.retrievePackage();
                         decodePackage(temp);
@@ -156,6 +157,9 @@ public class ClientLogic {
                         (GameDescriptionRecord[]) result.getArgument());
                 case FETCH_GAME_RECORD -> userInterface.printGameRecord(
                         (GameRecord) result.getArgument());
+                //TODO: printError should not be used this way
+                case REGISTER -> userInterface.printError("Registered successfully");
+                case SIGN -> transform(State.SIGNED_IN);
             }
         } catch (ClassCastException e) { //These exceptions shouldn't occur
             e.printStackTrace();
@@ -195,6 +199,14 @@ public class ClientLogic {
         temp.type = NetPackage.Type.READY;
         temp.setArgument(value);
         nextCommand.add(temp);
+    }
+
+    public void register(String email, String user, String password) {
+        nextCommand.add(new NetPackage(NetPackage.Type.REGISTER, new String[]{email, user, password}));
+
+    }
+    public void logIn(String email, String password) {
+        nextCommand.add(new NetPackage(NetPackage.Type.SIGN, new String[]{email, password}));
     }
 
     /**
@@ -273,6 +285,10 @@ public class ClientLogic {
          */
         CONNECTED,
         /**
+         * The user has been authorized
+         */
+        SIGNED_IN,
+        /**
          * Client is in lobby.
          */
         IN_LOBBY,
@@ -287,7 +303,7 @@ public class ClientLogic {
      */
     private void fetchData() throws IOException {
         switch (state) {
-            case CONNECTED -> nextCommand.add(
+            case SIGNED_IN -> nextCommand.add(
                     new NetPackage(NetPackage.Type.LOBBIES));
             case IN_LOBBY -> {
                 nextCommand.add(new NetPackage(NetPackage.Type.CURRENTPLAYER));
@@ -309,6 +325,10 @@ public class ClientLogic {
     private void transform(final State newState) {
         switch (this.state) {
             case DISCONNECTED:
+                if (newState == State.CONNECTED) {
+                    userInterface.askForCredentials();
+                }
+                break;
             case IN_GAME:
                 if (newState == State.CONNECTED) {
                     nextCommand.add(new NetPackage(NetPackage.Type.LOBBIES));
@@ -327,8 +347,12 @@ public class ClientLogic {
                 }
                 break;
             case CONNECTED:
-                if (newState == State.IN_LOBBY) {
+                if (newState == State.SIGNED_IN) {
                     nextCommand.clear();
+                }
+                break;
+            case SIGNED_IN:
+                if (newState == State.IN_LOBBY) {
                     nextCommand.add(new NetPackage(NetPackage.Type.BOARDMASK));
                 }
                 break;

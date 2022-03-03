@@ -5,17 +5,23 @@ public interface UserManager {
      * Used for verifying user
      * @param email user email
      * @param password user password
-     * @throws AuthorizationFailed thrown if password does not match email or user does not exist
+     * @return true iff logged in correctly
      */
-    String logIn (String email, String password) throws AuthorizationFailed;
+    boolean logIn (String email, String password);
 
     /**
      * Used for registering user
      * @param email email of registered user
      * @param name name of the user to be registered
      * @param password password of registered user
-     * @throws AuthorizationFailed Thrown if email was already used for registration or
-     * name/password don't fulfill requirements (e.g. minimum length)
+     * @return true iff registered correctly
      */
-    void register (String email, String name, String password) throws AuthorizationFailed;
+    boolean register (String email, String name, String password);
+
+    /**
+     * Used for retrieving playerName
+     * @return User nickName
+     * @throws AuthorizationFailed if User isn't signed in
+     */
+    String getName () throws AuthorizationFailed;
 }

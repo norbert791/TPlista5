@@ -10,7 +10,34 @@ public class MenuBar extends JMenuBar implements ActionListener { //TODO: Refact
     private JMenu playerColor;
     private JMenu currentColor;
     public MenuBar(MainFrame frame) {
+        JMenu temp = new JMenu("Join");
+        temp.add(new MyItem(ItemType.CONNECT));
+        temp.add(new MyItem(ItemType.DISCONNECT));
+        temp.add(new MyItem(ItemType.HISTORY));
+        this.add(temp);
+        temp = new JMenu("Game");
+        temp.add(new MyItem(ItemType.READY));
+        temp.add(new MyItem(ItemType.SKIP_TURN));
+        temp.add(new MyItem(ItemType.LEAVE));
+        this.add(temp);
+        JMenu temp3 = new JMenu("Your color");
+        temp3.setEnabled(false);
+        this.add(temp3);
+        playerColor = new JMenu();
+        playerColor.setEnabled(false);
+        playerColor.setBackground(Color.black);
+        playerColor.setOpaque(true);
+        this.add(playerColor);
+        temp3 = new JMenu("Current color");
+        temp3.setEnabled(false);
+        this.add(temp3);
+        currentColor = new JMenu();
+        currentColor.setEnabled(false);
+        currentColor.setBackground(Color.black);
+        currentColor.setOpaque(true);
+        this.add(currentColor);
         this.frame = frame;
+        /*
         Join temp = new Join();
         JMenuItem tempItem = new Connect();
         tempItem.addActionListener(this);
@@ -49,46 +76,7 @@ public class MenuBar extends JMenuBar implements ActionListener { //TODO: Refact
         currentColor.setEnabled(false);
         currentColor.setBackground(Color.black);
         currentColor.setOpaque(true);
-        this.add(currentColor);
-    }
-    //TODO: Make it enum
-    private class Join extends JMenu{
-        Join(){
-            super("Join");
-        }
-    }
-    private class Game extends JMenu{
-        Game(){
-            super("Game");
-        }
-    }
-    private class Connect extends JMenuItem{
-        Connect(){
-            super("Connect");
-        }
-    }
-    private class Disconnect extends JMenuItem{
-        Disconnect(){
-            super("Disconnect");
-        }
-    }
-    private class Leave extends JMenuItem{
-        Leave(){
-            super("Leave");
-        }
-    }
-    private class SkipTurn extends  JMenuItem{
-        SkipTurn(){
-            super("SkipTurn");
-        }
-    }
-    private class Ready extends JMenuItem{
-        Ready(){
-            super("SetReady");
-        }
-    }
-    private class History extends JMenuItem {
-        History() { super("History");}
+        this.add(currentColor);*/
     }
     public void setPlayerColor(Color color){
         this.playerColor.setBackground(color);
@@ -100,30 +88,45 @@ public class MenuBar extends JMenuBar implements ActionListener { //TODO: Refact
     }
     @Override
     public void actionPerformed(ActionEvent e){
-        if(e.getSource() instanceof Connect){
-            String address = JOptionPane.showInputDialog(
-                    frame,
-                    "Insert address"
-            );
-            if(address != null && !address.equals("")) {
-                frame.connect(address);
+        ItemType temp = ((MyItem) e.getSource()).type;
+        switch (temp) {
+            case CONNECT -> {
+                String address = JOptionPane.showInputDialog(
+                        frame,
+                        "Insert address"
+                );
+                if(address != null && !address.equals("")) {
+                    frame.connect(address);
+                }
             }
+            case LEAVE -> frame.leave();
+            case SKIP_TURN -> frame.skipTurn();
+            case READY -> frame.setReady(true);
+            case DISCONNECT -> frame.disconnect();
+            case HISTORY -> frame.showHistory();
         }
-        else if(e.getSource() instanceof Leave ) {
-            frame.leave();
+    }
+    private class MyItem extends JMenuItem {
+        public ItemType type;
+        public MyItem(ItemType type) {
+            this.type = type;
+            this.setText(switch (type) {
+                case CONNECT -> "connect";
+                case DISCONNECT -> "disconnect";
+                case LEAVE -> "leave";
+                case SKIP_TURN -> "skip";
+                case READY -> "ready";
+                case HISTORY -> "history";
+            });
+            addActionListener(MenuBar.this);
         }
-        else if(e.getSource() instanceof SkipTurn) {
-            frame.skipTurn();
-        }
-        else if(e.getSource() instanceof Disconnect) {
-            frame.disconnect();
-        }
-        else if(e.getSource() instanceof Ready){
-            frame.setReady(true);
-        }
-        else if(e.getSource() instanceof History) {
-            frame.showHistory();
-        }
-
+    }
+    private enum ItemType {
+        CONNECT,
+        DISCONNECT,
+        LEAVE,
+        SKIP_TURN,
+        READY,
+        HISTORY,
     }
 }

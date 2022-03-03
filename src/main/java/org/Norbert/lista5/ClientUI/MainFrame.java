@@ -10,6 +10,8 @@ import java.awt.*;
 import java.awt.Color;
 import java.util.Map;
 
+import static javax.swing.JOptionPane.*;
+
 /**
  * Main window if the gui.
  */
@@ -217,6 +219,56 @@ public class MainFrame extends JFrame implements UserInterface {
         }
     }
 
+    @Override
+    public void askForCredentials() {
+        Object[] options = {"Sign in",
+                "Register"};
+        int n = JOptionPane.showOptionDialog(this,
+                "",
+                "Log in",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,     //do not use a custom Icon
+                options,  //the titles of buttons
+                options[0]); //default button title
+        if (n == YES_OPTION) {
+            JTextField email = new JTextField();
+            JTextField password = new JPasswordField();
+            Object[] message = {
+                    "email:", email,
+                    "Password:", password
+            };
+
+            int option = JOptionPane.showConfirmDialog(null, message, "Sign in", JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION) {
+                clientLogic.logIn(email.getText(), password.getText());
+            }
+        }
+        else if (n == NO_OPTION) {
+            JTextField email = new JTextField();
+            JTextField password = new JPasswordField();
+            JTextField nickName = new JTextField();
+            JTextField password2 = new JPasswordField();
+            Object[] message = {
+                    "email:", email,
+                    "nickName:", nickName,
+                    "Password:", password,
+                    "repeat password:", password2
+            };
+
+            int option = JOptionPane.showConfirmDialog(null, message, "Register", JOptionPane.OK_CANCEL_OPTION);
+            if (option == JOptionPane.OK_OPTION) {
+                if (password.getText().equals(password2.getText())) {
+                    clientLogic.register(email.getText(), nickName.getText(), password.getText());
+                }
+                else {
+                    showMessageDialog(this,"Passwords don't match each other");
+                }
+            }
+        }
+
+    }
+
     /**
      * Get color of the player currently making their move.
      * @return Color of the current player
@@ -238,7 +290,6 @@ public class MainFrame extends JFrame implements UserInterface {
      * @param address address of the server
      */
     public void connect(String address) {
-
         clientLogic.connect(address);
     }
 

@@ -24,7 +24,7 @@ import java.util.List;
 
 public class HibernateUserManager implements UserManager {
     private SessionFactory sessionFactory;
-
+    private String playerName = null;
     public SessionFactory getSessionFactory() {
         return sessionFactory;
     }
@@ -34,7 +34,7 @@ public class HibernateUserManager implements UserManager {
     }
 
     @Override
-    public String logIn(String email, String password) throws AuthorizationFailed {
+    public boolean logIn(String email, String password){
         Session session = sessionFactory.openSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<Player> cr = builder.createQuery(Player.class);
@@ -47,16 +47,17 @@ public class HibernateUserManager implements UserManager {
             List<Player> results = query.getResultList();
             if (results.size() != 1) {
                 session.close();
-                throw new AuthorizationFailed("User does not exist");
+                return false;
             }
             else {
                  String salt = results.get(0).getSalt();
                  if (BCrypt.checkpw(password, results.get(0).getHashedPassword())) {
                     session.close();
-                    return results.get(0).getNickName();
+                    playerName = results.get(0).getNickName();
+                    return true;
                 }
                 else {
-                    throw new AuthorizationFailed("Password error");
+                    return false;
                 }
             }
         } catch (SessionException e) {
@@ -64,11 +65,11 @@ public class HibernateUserManager implements UserManager {
         } finally {
             session.close();
         }
-        return null;
+        return false;
     }
 
     @Override
-    public void register(String email, String name, String password) throws AuthorizationFailed {
+    public boolean register(String email, String name, String password) {
         Session session = sessionFactory.openSession();
         Player player = new Player();
         player.setEmail(email);
@@ -80,10 +81,21 @@ public class HibernateUserManager implements UserManager {
             tx = session.beginTransaction();
             session.save(player);
             tx.commit();
+            return true;
         } catch (ConstraintViolationException e) {
-            throw new AuthorizationFailed("This credentials can't be used for registration");
+            return false;
         } finally {
           session.close();
+        }
+    }
+
+    @Override
+    public String getName() throws AuthorizationFailed {
+        if (playerName == null) {
+            throw new AuthorizationFailed("This user did not sign in");
+        }
+        else {
+            return playerName;
         }
     }
 }

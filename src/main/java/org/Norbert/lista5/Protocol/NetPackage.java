@@ -27,7 +27,9 @@ public class NetPackage implements Serializable {
         PlAYERLIST,
         WINORDER,
         FETCH_HISTORY,
-        FETCH_GAME_RECORD
+        FETCH_GAME_RECORD,
+        REGISTER,
+        SIGN
     }
 
     /**

@@ -1,5 +1,7 @@
 package org.Norbert.lista5.Server;
 
+import org.Norbert.lista5.Database.AuthorizationFailed;
+import org.Norbert.lista5.Database.UserManager;
 import org.Norbert.lista5.Database.jdbcTemplateImplementation.GameDescriptionRecord;
 import org.Norbert.lista5.Database.jdbcTemplateImplementation.GameRecord;
 import org.Norbert.lista5.Database.HistoryRetriever;
@@ -21,8 +23,7 @@ public class Player implements Runnable {
     /**
      * Nickname of player instance. For now randomized as placeholder.
      */
-    private String nickName = "test"
-            + ThreadLocalRandom.current().nextInt(100);
+    private String nickName;
     /**
      * Lobby the player is currently connected to.
      */
@@ -48,17 +49,32 @@ public class Player implements Runnable {
      */
     private NetProtocolServer protocol = null;
 
+    private final UserManager userManager;
+
     private HistoryRetriever retriever;
+
+    private boolean signedIn = false;
+
+    public boolean isSignedIn() {
+        return signedIn;
+    }
+
+    public void setSignedIn(boolean signedIn) {
+        this.signedIn = signedIn;
+    }
+
     /**
      * Constructor used for spawning connection thread.
      * @param parent reference to server that spawns the thread
      * @param socket reference to socket used for exchanging data with client
      */
-    public Player(final Server parent, final Socket socket, HistoryRetriever retriever) {
+    public Player(final Server parent, final Socket socket, HistoryRetriever retriever, final UserManager userManager) {
         this.lobbyArray = parent.getLobbyArray();
         this.parent = parent;
         this.socket = socket;
         this.retriever = retriever;
+        this.userManager = userManager;
+        this.nickName = null;
     }
 
     /**
@@ -68,6 +84,9 @@ public class Player implements Runnable {
         this.parent = null;
         socket = null;
         retriever = null;
+        this.userManager = null;
+        this.nickName = "test"
+                + ThreadLocalRandom.current().nextInt(1000);
     }
 
     /**
@@ -298,6 +317,16 @@ public class Player implements Runnable {
         }
     }
 
+    private NetPackage fetchHistory() {
+        GameDescriptionRecord[] temp = retriever.fetchGameList(nickName);
+        return new NetPackage(NetPackage.Type.FETCH_HISTORY, temp);
+    }
+
+    private NetPackage fetchRecord(int id) {
+        GameRecord temp = retriever.fetchHistory(id);
+        return new NetPackage(NetPackage.Type.FETCH_GAME_RECORD, temp);
+    }
+
     /**
      * NetPackage containing the color of the current player.
      * @return On success, NetPackage with color assigned to the player or
@@ -315,6 +344,46 @@ public class Player implements Runnable {
             result.setArgument(lobby.getPlayerColor(lobby.getCurrentPlayer()));
         }
         return result;
+    }
+    private NetPackage register(NetPackage message) {
+        try {
+            String[] args = (String[])message.getArgument();
+            if(userManager.register(args[0], args[1], args[2])) {
+                return new NetPackage(NetPackage.Type.REGISTER, "Registered correctly");
+            }
+            else {
+                return new NetPackage(NetPackage.Type.SIGN, "Registration failed");
+            }
+        } catch (ClassCastException | IndexOutOfBoundsException e) {
+            return new NetPackage(NetPackage.Type.ERROR, "Incorrect request");
+        }
+    }
+    private NetPackage sign(NetPackage message) {
+        try {
+            String[] args = (String[]) message.getArgument();
+            if (userManager.logIn(args[0], args[1])) {
+                try {
+                    this.nickName = userManager.getName();
+                    this.signedIn = true;
+                } catch (AuthorizationFailed e) {
+                    e.printStackTrace();
+                }
+                return new NetPackage(NetPackage.Type.SIGN, "Signed correctly");
+            }
+            else {
+                return new NetPackage(NetPackage.Type.ERROR, "Signing in failed");
+            }
+        } catch (IndexOutOfBoundsException | ClassCastException e) {
+            return new NetPackage(NetPackage.Type.ERROR, "Incorrect request");
+        }
+    }
+    private NetPackage disconnect() {
+        System.out.println("Disconnect received");
+        connected = false;
+        if (lobby != null) {
+            lobby.removePlayer(this);
+        }
+        return new NetPackage(NetPackage.Type.DISCONNECT);
     }
 
     /**
@@ -337,45 +406,28 @@ public class Player implements Runnable {
                      int[] temp = (int[]) message.getArgument();
                      yield moveChecker(temp[0], temp[1], temp[2], temp[3]);
                  }
-                 case DISCONNECT -> {
-                     System.out.println("Disconnect received");
-                     NetPackage temp = new NetPackage();
-                     temp.type = NetPackage.Type.DISCONNECT;
-                     temp.setArgument("Closed correctly");
-                     protocol.sendPackage(temp);
-                     connected = false;
-                     if (lobby != null) {
-                         lobby.removePlayer(this);
-                     }
-                     yield new NetPackage(NetPackage.Type.DISCONNECT);
-                 }
+                 case DISCONNECT -> disconnect();
                  case LOBBIES -> updateLobbyArray();
                  case SKIP -> skipTurn();
                  case CURRENTPLAYER -> currentPlayer();
                  case WINORDER -> winOrder();
                  case PlAYERLIST -> playerList();
                  case BOARDMASK -> getMask();
-                 case FETCH_HISTORY -> {
-                     GameDescriptionRecord[] temp = retriever.fetchGameList(nickName);
-                     yield new NetPackage(NetPackage.Type.FETCH_HISTORY, temp);
-                 }
-                 case FETCH_GAME_RECORD -> {
-                     GameRecord temp = retriever.fetchHistory((int) message.getArgument());
-                     yield new NetPackage(NetPackage.Type.FETCH_GAME_RECORD, temp);
-                 }
+                 case FETCH_HISTORY -> fetchHistory();
+                 case FETCH_GAME_RECORD -> fetchRecord((int) message.getArgument());
                  case ERROR, CONNECT -> {
                      NetPackage temp = new NetPackage();
                      temp.type = NetPackage.Type.ERROR;
                      temp.setArgument("This command is reserved for server");
                      yield temp;
                  }
+                 case REGISTER -> register(message);
+                 case SIGN -> sign(message);
              };
          } catch (IndexOutOfBoundsException e) {
              result.setArgument("The int array should be size of 4");
          } catch (ClassCastException e) {
              result.setArgument("This command has incorrect parameter");
-         } catch (IOException e) {
-             e.printStackTrace();
          }
         return result;
     }
@@ -394,6 +446,19 @@ public class Player implements Runnable {
             System.out.println("Exception");
             return;
         }
+        while(!signedIn && connected) {
+            try {
+                if (protocol.waitForPackage()) {
+                    NetPackage temp = protocol.retrievePackage();
+                    if (temp.type == NetPackage.Type.REGISTER || temp.type == NetPackage.Type.SIGN) {
+                        temp = parseCommand(temp);
+                        protocol.sendPackage(temp);
+                    }
+                }
+            } catch (IOException e) {
+                return;
+                }
+            }
         while (connected) {
             try {
                 if (protocol.waitForPackage()) {

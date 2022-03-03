@@ -84,4 +84,9 @@ public interface UserInterface {
      * @param record gameRecord
      */
     void printGameRecord(GameRecord record);
+
+    /**
+     * Asks user for their credentials
+     */
+    void askForCredentials();
 }

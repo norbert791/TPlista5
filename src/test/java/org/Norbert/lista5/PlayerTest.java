@@ -1,5 +1,7 @@
 package org.Norbert.lista5;
 
+import org.Norbert.lista5.Database.AuthorizationFailed;
+import org.Norbert.lista5.Database.UserManager;
 import org.Norbert.lista5.Database.jdbcTemplateImplementation.GameDescriptionRecord;
 import org.Norbert.lista5.Database.jdbcTemplateImplementation.GameRecord;
 import org.Norbert.lista5.Database.HistoryRetriever;
@@ -13,6 +15,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class PlayerTest {
 
@@ -144,7 +147,7 @@ public class PlayerTest {
     @Test
     void updateLobbyList(){
         Server server = new Server(7777);
-        Player player = new Player(server, new Socket(), new MockRetriever());
+        Player player = new Player(server, new Socket(), new MockRetriever(), new MockUserManager());
         try {
             Field field = Player.class.getDeclaredField("lobbyArray");
             Method method = Player.class.getDeclaredMethod("updateLobbyArray");
@@ -182,6 +185,23 @@ public class PlayerTest {
         @Override
         public GameRecord fetchHistory(int game_id) {
             return null;
+        }
+    }
+    private class MockUserManager implements UserManager {
+
+        @Override
+        public boolean logIn(String email, String password){
+            return true;
+        }
+
+        @Override
+        public boolean register(String email, String name, String password){
+            return true;
+        }
+
+        @Override
+        public String getName() throws AuthorizationFailed {
+            return "test" + ThreadLocalRandom.current().nextInt(1000);
         }
     }
 }

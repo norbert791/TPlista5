@@ -1,2 +1,3 @@
 -use aop to handle database events in lobby
 -refactor databases
+-decouple clientLogic from NetPackage

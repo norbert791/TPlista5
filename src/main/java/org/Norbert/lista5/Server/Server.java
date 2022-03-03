@@ -4,6 +4,8 @@ package org.Norbert.lista5.Server;
 //TODO some values should be customizable rather than hardcoded
 //TODO Server is locking when waiting for connection.
 import org.Norbert.lista5.Database.GameLogger;
+import org.Norbert.lista5.Database.HistoryRetriever;
+import org.Norbert.lista5.Database.UserManager;
 import org.Norbert.lista5.Database.jdbcTemplateImplementation.SimpleRetriever;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -20,7 +22,7 @@ import java.util.concurrent.Executors;
  * Class used for server initialization and thread management.
  */
 public class Server {
-    private final ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
+    private final ApplicationContext context = new ClassPathXmlApplicationContext("BeansHibernateVersion.xml");
 
     /**
      * Collection of Lobbies.
@@ -74,7 +76,8 @@ public class Server {
            Socket connection = socket.accept();
            if (playersList.size() < maxNumberOfConnections) {
                Player temp = new Player(this, connection,
-                       (SimpleRetriever) context.getBean("SimpleRetriever"));
+                       (HistoryRetriever) context.getBean("SimpleRetriever"),
+                       (UserManager) context.getBean("userManager"));
                pool.execute(temp);
                System.out.println("User connected");
            }
