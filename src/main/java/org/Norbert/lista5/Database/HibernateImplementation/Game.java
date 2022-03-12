@@ -1,11 +1,12 @@
 package org.Norbert.lista5.Database.HibernateImplementation;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity
 @Table (name = "Game")
-public class Game {
+public class Game implements Serializable {
     @Id
     @GeneratedValue
     private int id;

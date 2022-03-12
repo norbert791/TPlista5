@@ -17,9 +17,9 @@
 
     <!-- Definition for studentJDBCTemplate bean -->
 
-    <bean id = "SimpleLogger"
+    <bean id = "Logger"
           class = "org.Norbert.lista5.Database.HibernateImplementation.HibernateLogger">
-        <property name = "dataSource" ref = "dataSource" />
+        <property name="sessionFactory" ref = "mySessionFactory"></property>
     </bean>
 
     <bean id = "SimpleRetriever"

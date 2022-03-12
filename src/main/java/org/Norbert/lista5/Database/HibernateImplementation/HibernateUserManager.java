@@ -4,22 +4,17 @@ import org.Norbert.lista5.Database.AuthorizationFailed;
 import org.Norbert.lista5.Database.UserManager;
 import org.hibernate.*;
 import org.hibernate.exception.ConstraintViolationException;
-import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework
         .security
         .crypto
         .bcrypt
         .BCrypt;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.lang.module.Configuration;
 import java.util.List;
 
 public class HibernateUserManager implements UserManager {

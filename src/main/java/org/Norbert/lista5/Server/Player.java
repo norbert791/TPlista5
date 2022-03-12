@@ -463,6 +463,7 @@ public class Player implements Runnable {
             try {
                 if (protocol.waitForPackage()) {
                     NetPackage temp = protocol.retrievePackage();
+                    System.out.println(temp.type);
                     temp = parseCommand(temp);
                     protocol.sendPackage(temp);
                 }
@@ -484,7 +485,7 @@ public class Player implements Runnable {
     }
 
     /***
-     * Retrievs the nickName of this player.
+     * Retrieves the nickName of this player.
      * @return String with instance's nickname
      */
     public String getNickName() {

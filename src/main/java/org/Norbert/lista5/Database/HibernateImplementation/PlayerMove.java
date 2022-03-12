@@ -3,10 +3,11 @@ package org.Norbert.lista5.Database.HibernateImplementation;
 import org.Norbert.lista5.Game.Color;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "move")
-public class PlayerMove {
+public class PlayerMove implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -16,6 +17,15 @@ public class PlayerMove {
     private MoveType moveType;
     @OneToOne(targetEntity = CheckerMove.class, cascade = CascadeType.ALL)
     private CheckerMove checkerMove;
+    private int orderingNumber;
+
+    public int getOrderingNumber() {
+        return orderingNumber;
+    }
+
+    public void setOrderingNumber(int orderingNumber) {
+        this.orderingNumber = orderingNumber;
+    }
 
     public int getId() {
         return id;

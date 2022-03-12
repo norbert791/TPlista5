@@ -1,10 +1,11 @@
 package org.Norbert.lista5.Database.HibernateImplementation;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "CheckerMove")
-public class CheckerMove {
+public class CheckerMove implements Serializable {
     @Id
     @GeneratedValue
     int id;
@@ -51,5 +52,15 @@ public class CheckerMove {
 
     public void setNewY(int newY) {
         this.newY = newY;
+    }
+
+    public CheckerMove(int oldX, int oldY, int newX, int newY) {
+        this.oldX = oldX;
+        this.oldY = oldY;
+        this.newX = newX;
+        this.newY = newY;
+    }
+
+    public CheckerMove() {
     }
 }

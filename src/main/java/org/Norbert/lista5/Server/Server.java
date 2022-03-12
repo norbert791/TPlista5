@@ -97,7 +97,7 @@ public class Server {
                             + numberOfLobbies);
         } else {
             for (int i = 0; i < numberOfLobbies; i++) {
-                lobbyList.add(new Lobby((GameLogger) context.getBean("SimpleLogger")));
+                lobbyList.add(new Lobby((GameLogger) context.getBean("Logger")));
             }
         }
     }

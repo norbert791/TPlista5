@@ -1,18 +1,40 @@
 package org.Norbert.lista5.Database.HibernateImplementation;
 
 import org.Norbert.lista5.Game.Color;
+import org.Norbert.lista5.Game.Seat;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-public class LobbyPlayer {
+public class LobbyPlayer implements Serializable {
     @Id
     @GeneratedValue
     private int id;
-    private int gameId;
+    @ManyToOne
+    @JoinColumn(name = "game_id")
+    private Game game;
     private int playerId;
     @Enumerated(EnumType.STRING)
     private Color color;
+    @Enumerated(EnumType.STRING)
+    private Seat seat;
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public Seat getSeat() {
+        return seat;
+    }
+
+    public void setSeat(Seat seat) {
+        this.seat = seat;
+    }
 
     public int getId() {
         return id;
@@ -20,14 +42,6 @@ public class LobbyPlayer {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public int getGameId() {
-        return gameId;
-    }
-
-    public void setGameId(int gameId) {
-        this.gameId = gameId;
     }
 
     public int getPlayerId() {

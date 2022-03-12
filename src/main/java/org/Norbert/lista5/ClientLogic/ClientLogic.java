@@ -226,7 +226,7 @@ public class ClientLogic {
      * @param number id of lobby the client should connect to
      */
     public void join(final int number) {
-        if (state != State.CONNECTED) {
+        if (state != State.SIGNED_IN) {
             return;
         }
         NetPackage temp = new NetPackage();
@@ -252,14 +252,14 @@ public class ClientLogic {
      * wants to safely disconnect.
      */
     public void disconnect() {
-        if (state == State.DISCONNECTED) {
+        if (state == State.DISCONNECTED || state == State.SIGNED_IN) {
             return;
         }
         transform(State.DISCONNECTED);
     }
 
     public void fetchHistory() {
-        if (state == State.CONNECTED) {
+        if (state == State.SIGNED_IN) {
             NetPackage temp = new NetPackage();
             temp.type = NetPackage.Type.FETCH_HISTORY;
             nextCommand.add(temp);
@@ -267,7 +267,7 @@ public class ClientLogic {
     }
 
     public void fetchGame(int gameId) {
-        if (state == State.CONNECTED) {
+        if (state == State.SIGNED_IN) {
             nextCommand.add(new NetPackage(NetPackage.Type.FETCH_GAME_RECORD, gameId));
         }
     }
